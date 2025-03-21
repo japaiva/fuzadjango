@@ -1,0 +1,22 @@
+{% extends 'simulador/base.html' %}
+{% block title %}Cliente - Simulador{% endblock %}
+{% block content %}
+
+<div class="container bg-light text-dark p-4 rounded shadow mt-4" style="max-width: 600px;">
+  <h2 class="mb-4">Identificação do Cliente</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="nome" class="form-label">Nome do Solicitante <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" id="nome" name="nome" required>
+    </div>
+    <div class="mb-3">
+      <label for="empresa" class="form-label">Empresa</label>
+      <input type="text" class="form-control" id="empresa" name="empresa">
+    </div>
+    <div class="d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary">Salvar e Avançar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

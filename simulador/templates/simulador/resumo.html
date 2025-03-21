@@ -1,0 +1,33 @@
+{% extends 'simulador/base.html' %}
+{% block title %}Resumo - Simulador{% endblock %}
+{% block content %}
+<div class="container bg-light text-dark p-4 rounded shadow mt-4">
+  <h2 class="mb-4">Resumo da Simulação</h2>
+
+  {% if respostas %}
+    {% for etapa, dados in respostas.items %}
+      <div class="mb-4">
+        <h5 class="text-primary">{{ etapa|title }}</h5>
+        <ul class="list-group">
+          {% for chave, valor in dados.items %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>{{ chave|capfirst }}</span>
+              <span class="fw-semibold">{{ valor }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-danger">Nenhuma informação preenchida ainda.</p>
+  {% endif %}
+
+  <div class="text-center mt-5">
+    <form method="post" action="{% url 'simulador:reiniciar_simulacao' %}" class="d-inline">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger btn-lg">Nova Simulação</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

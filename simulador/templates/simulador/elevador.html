@@ -1,0 +1,76 @@
+{% extends 'simulador/base.html' %}
+{% block title %}Elevador - Simulador{% endblock %}
+{% block content %}
+<div class="container bg-light text-dark p-4 rounded shadow mt-4" style="max-width: 800px;">
+  <h2 class="mb-4">Detalhes do Elevador</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="modelo" class="form-label">Modelo do Elevador</label>
+        <select id="modelo" name="modelo" class="form-select" required>
+          <option value="Passageiro">Passageiro</option>
+          <option value="Carga">Carga</option>
+          <option value="Monta Prato">Monta Prato</option>
+          <option value="Plataforma Acessibilidade">Plataforma Acessibilidade</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="capacidade" class="form-label">Capacidade (kg)</label>
+        <input type="number" class="form-control" id="capacidade" name="capacidade" step="10">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="acionamento" class="form-label">Acionamento</label>
+        <select id="acionamento" name="acionamento" class="form-select">
+          <option value="Motor">Motor</option>
+          <option value="Hidraulico">Hidráulico</option>
+          <option value="Carretel">Carretel</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="tracao" class="form-label">Tração</label>
+        <select id="tracao" name="tracao" class="form-select">
+          <option value="1x1">1x1</option>
+          <option value="2x1">2x1</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="contrapeso" class="form-label">Contrapeso</label>
+        <select id="contrapeso" name="contrapeso" class="form-select">
+          <option value="Traseiro">Traseiro</option>
+          <option value="Lateral">Lateral</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="pavimentos" class="form-label">Número de Pavimentos</label>
+        <input type="number" class="form-control" id="pavimentos" name="pavimentos" min="2" step="1">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label for="largura_poco" class="form-label">Largura do Poço (m)</label>
+        <input type="number" step="0.01" class="form-control" id="largura_poco" name="largura_poco">
+      </div>
+      <div class="col-md-4">
+        <label for="comprimento_poco" class="form-label">Comprimento do Poço (m)</label>
+        <input type="number" step="0.01" class="form-control" id="comprimento_poco" name="comprimento_poco">
+      </div>
+      <div class="col-md-4">
+        <label for="altura_poco" class="form-label">Altura do Poço (m)</label>
+        <input type="number" step="0.01" class="form-control" id="altura_poco" name="altura_poco">
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary">Salvar e Avançar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

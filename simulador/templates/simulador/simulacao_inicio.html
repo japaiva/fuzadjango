@@ -1,0 +1,49 @@
+{% extends 'simulador/base.html' %}
+{% block title %}Início da Simulação{% endblock %}
+{% block content %}
+<div class="content-wrapper">
+    <h2 class="text-primary">Escolha uma etapa para começar</h2>
+    <div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+        <div class="col">
+            <a href="{% url 'simulador:cliente' %}" class="text-decoration-none">
+                <div class="card text-bg-dark h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-person-lines-fill display-5"></i>
+                        <h5 class="card-title mt-3">Cliente</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="{% url 'simulador:elevador' %}" class="text-decoration-none">
+                <div class="card text-bg-dark h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-building display-5"></i>
+                        <h5 class="card-title mt-3">Elevador</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="{% url 'simulador:portas' %}" class="text-decoration-none">
+                <div class="card text-bg-dark h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-door-open display-5"></i>
+                        <h5 class="card-title mt-3">Portas</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="{% url 'simulador:cabine' %}" class="text-decoration-none">
+                <div class="card text-bg-dark h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-aspect-ratio-fill display-5"></i>
+                        <h5 class="card-title mt-3">Cabine</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

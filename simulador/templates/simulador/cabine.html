@@ -1,0 +1,67 @@
+{% extends 'simulador/base.html' %}
+{% block title %}Cabine - Simulador{% endblock %}
+{% block content %}
+<div class="container bg-light text-dark p-4 rounded shadow mt-4">
+  <h2 class="mb-4">Detalhes da Cabine</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="material" class="form-label">Material</label>
+        <select class="form-select" id="material" name="material">
+          <option>Inox 430</option>
+          <option>Inox 304</option>
+          <option>Chapa Pintada</option>
+          <option>Alumínio</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="espessura" class="form-label">Espessura (mm)</label>
+        <select class="form-select" id="espessura" name="espessura">
+          <option>1,2</option>
+          <option>1,5</option>
+          <option>2,0</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="saida" class="form-label">Saída</label>
+        <select class="form-select" id="saida" name="saida">
+          <option>Padrão</option>
+          <option>Oposta</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="piso" class="form-label">Piso</label>
+        <select class="form-select" id="piso" name="piso">
+          <option>Por conta do cliente</option>
+          <option>Por conta da empresa</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="largura" class="form-label">Largura da Cabine (m)</label>
+        <input type="number" step="0.01" min="0" class="form-control" id="largura" name="largura" disabled>
+      </div>
+      <div class="col-md-6">
+        <label for="comprimento" class="form-label">Comprimento da Cabine (m)</label>
+        <input type="number" step="0.01" min="0" class="form-control" id="comprimento" name="comprimento" disabled>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="altura" class="form-label">Altura da Cabine (m)</label>
+      <input type="number" step="0.01" min="0" class="form-control" id="altura" name="altura">
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary">Salvar e Avançar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'simulador/base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="content-wrapper">
+    <h2 class="text-white mb-4">Entrar no Simulador</h2>
+    <form method="post" class="text-start">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+</div>
+{% endblock %}
