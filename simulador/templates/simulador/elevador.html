@@ -1,76 +1,138 @@
 {% extends 'simulador/base.html' %}
 {% block title %}Elevador - Simulador{% endblock %}
 {% block content %}
-<div class="container bg-light text-dark p-4 rounded shadow mt-4" style="max-width: 800px;">
-  <h2 class="mb-4">Detalhes do Elevador</h2>
-  <form method="post">
+<div class="container bg-light text-dark p-4 rounded shadow mt-4" style="max-width: 1000px;">
+  <h3 class="mb-4 text-center">Detalhes do Elevador</h3>
+  <form method="post" id="elevadorForm">
     {% csrf_token %}
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label for="modelo" class="form-label">Modelo do Elevador</label>
-        <select id="modelo" name="modelo" class="form-select" required>
-          <option value="Passageiro">Passageiro</option>
-          <option value="Carga">Carga</option>
-          <option value="Monta Prato">Monta Prato</option>
-          <option value="Plataforma Acessibilidade">Plataforma Acessibilidade</option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label for="capacidade" class="form-label">Capacidade (kg)</label>
-        <input type="number" class="form-control" id="capacidade" name="capacidade" step="10">
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label for="acionamento" class="form-label">Acionamento</label>
-        <select id="acionamento" name="acionamento" class="form-select">
-          <option value="Motor">Motor</option>
-          <option value="Hidraulico">Hidráulico</option>
-          <option value="Carretel">Carretel</option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label for="tracao" class="form-label">Tração</label>
-        <select id="tracao" name="tracao" class="form-select">
-          <option value="1x1">1x1</option>
-          <option value="2x1">2x1</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label for="contrapeso" class="form-label">Contrapeso</label>
-        <select id="contrapeso" name="contrapeso" class="form-select">
-          <option value="Traseiro">Traseiro</option>
-          <option value="Lateral">Lateral</option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label for="pavimentos" class="form-label">Número de Pavimentos</label>
-        <input type="number" class="form-control" id="pavimentos" name="pavimentos" min="2" step="1">
-      </div>
-    </div>
-
-    <div class="row mb-3">
+    <div class="row">
       <div class="col-md-4">
-        <label for="largura_poco" class="form-label">Largura do Poço (m)</label>
-        <input type="number" step="0.01" class="form-control" id="largura_poco" name="largura_poco">
+        <div class="mb-3">
+          <label for="modelo" class="form-label small">Modelo do Elevador</label>
+          <select id="modelo" name="modelo" class="form-select form-select-sm" required>
+            <option value="Passageiro">Passageiro</option>
+            <option value="Carga">Carga</option>
+            <option value="Monta Prato">Monta Prato</option>
+            <option value="Plataforma Acessibilidade">Plataforma Acessibilidade</option>
+          </select>
+        </div>
+        <div id="capacidadePassageiro" class="mb-3" style="display: none;">
+          <label for="capacidade_passageiro" class="form-label small">Capacidade (Número de Pessoas)</label>
+          <input type="number" class="form-control form-control-sm" id="capacidade_passageiro" name="capacidade_passageiro" min="1" max="50" value="1">
+        </div>
+        <div class="mb-3">
+          <label for="capacidade" class="form-label small">Capacidade (kg)</label>
+          <input type="number" class="form-control form-control-sm" id="capacidade" name="capacidade" min="80" max="10000" step="10" value="80">
+        </div>
       </div>
       <div class="col-md-4">
-        <label for="comprimento_poco" class="form-label">Comprimento do Poço (m)</label>
-        <input type="number" step="0.01" class="form-control" id="comprimento_poco" name="comprimento_poco">
+        <div class="mb-3">
+          <label for="acionamento" class="form-label small">Acionamento</label>
+          <select id="acionamento" name="acionamento" class="form-select form-select-sm">
+            <option value="Motor">Motor</option>
+            <option value="Hidraulico">Hidráulico</option>
+            <option value="Carretel">Carretel</option>
+          </select>
+        </div>
+        <div id="tracaoDiv" class="mb-3">
+          <label for="tracao" class="form-label small">Tração</label>
+          <select id="tracao" name="tracao" class="form-select form-select-sm">
+            <option value="1x1">1x1</option>
+            <option value="2x1">2x1</option>
+          </select>
+        </div>
+        <div id="contrapesoDiv" class="mb-3">
+          <label for="contrapeso" class="form-label small">Contrapeso</label>
+          <select id="contrapeso" name="contrapeso" class="form-select form-select-sm">
+            <option value="Traseiro">Traseiro</option>
+            <option value="Lateral">Lateral</option>
+          </select>
+        </div>
       </div>
       <div class="col-md-4">
-        <label for="altura_poco" class="form-label">Altura do Poço (m)</label>
-        <input type="number" step="0.01" class="form-control" id="altura_poco" name="altura_poco">
+        <div class="mb-3">
+          <label for="largura_poco" class="form-label small">Largura do Poço (m)</label>
+          <input type="number" class="form-control form-control-sm" id="largura_poco" name="largura_poco" min="0" max="10" step="0.01" value="2.00">
+        </div>
+        <div class="mb-3">
+          <label for="comprimento_poco" class="form-label small">Comprimento do Poço (m)</label>
+          <input type="number" class="form-control form-control-sm" id="comprimento_poco" name="comprimento_poco" min="0" max="10" step="0.01" value="2.00">
+        </div>
+        <div class="mb-3">
+          <label for="altura_poco" class="form-label small">Altura do Poço (m)</label>
+          <input type="number" class="form-control form-control-sm" id="altura_poco" name="altura_poco" min="0" max="100" step="0.01" value="3.00">
+        </div>
+        <div class="mb-3">
+          <label for="pavimentos" class="form-label small">Pavimentos</label>
+          <input type="number" class="form-control form-control-sm" id="pavimentos" name="pavimentos" min="2" max="100" step="1" value="2">
+        </div>
       </div>
     </div>
-
-    <div class="d-flex justify-content-end">
-      <button type="submit" class="btn btn-primary">Salvar e Avançar</button>
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <a href="{% url 'simulador:cliente' %}" class="btn btn-outline-secondary btn-sm btn-nav">
+        <i class="fas fa-chevron-left"></i> Voltar
+      </a>
+      <button type="submit" class="btn btn-primary btn-sm btn-nav">
+        Avançar <i class="fas fa-chevron-right"></i>
+      </button>
     </div>
   </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('elevadorForm');
+  const modelo = document.getElementById('modelo');
+  const capacidadePassageiro = document.getElementById('capacidadePassageiro');
+  const capacidade = document.getElementById('capacidade');
+  const acionamento = document.getElementById('acionamento');
+  const tracaoDiv = document.getElementById('tracaoDiv');
+  const contrapesoDiv = document.getElementById('contrapesoDiv');
+
+  function updateCapacidade() {
+    if (modelo.value === 'Passageiro') {
+      capacidadePassageiro.style.display = 'block';
+      capacidade.disabled = true;
+      capacidade.value = document.getElementById('capacidade_passageiro').value * 80;
+    } else {
+      capacidadePassageiro.style.display = 'none';
+      capacidade.disabled = false;
+    }
+  }
+
+  function updateAcionamento() {
+    if (acionamento.value === 'Hidraulico') {
+      tracaoDiv.style.display = 'none';
+      contrapesoDiv.style.display = 'none';
+    } else {
+      tracaoDiv.style.display = 'block';
+      if (acionamento.value === 'Motor') {
+        contrapesoDiv.style.display = 'block';
+      } else {
+        contrapesoDiv.style.display = 'none';
+      }
+    }
+  }
+
+  modelo.addEventListener('change', updateCapacidade);
+  acionamento.addEventListener('change', updateAcionamento);
+  document.getElementById('capacidade_passageiro').addEventListener('input', updateCapacidade);
+
+  updateCapacidade();
+  updateAcionamento();
+
+  form.addEventListener('submit', function(e) {
+    const larguraPoco = parseFloat(document.getElementById('largura_poco').value);
+    const comprimentoPoco = parseFloat(document.getElementById('comprimento_poco').value);
+    const alturaPoco = parseFloat(document.getElementById('altura_poco').value);
+
+    if (larguraPoco <= 0 || comprimentoPoco <= 0 || alturaPoco <= 0) {
+      e.preventDefault();
+      alert('As dimensões do poço devem ser maiores que zero.');
+    }
+  });
+});
+</script>
 {% endblock %}

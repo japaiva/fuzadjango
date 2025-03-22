@@ -1,67 +1,167 @@
 {% extends 'simulador/base.html' %}
-{% block title %}Cabine - Simulador{% endblock %}
+{% block title %}Cabine do Elevador - Simulador{% endblock %}
 {% block content %}
-<div class="container bg-light text-dark p-4 rounded shadow mt-4">
-  <h2 class="mb-4">Detalhes da Cabine</h2>
-  <form method="post">
+<div class="container bg-light text-dark p-4 rounded shadow mt-4" style="max-width: 1000px;">
+  <h3 class="mb-4 text-center">Detalhes da Cabine</h3>
+  <form method="post" id="cabineForm">
     {% csrf_token %}
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label for="material" class="form-label">Material</label>
-        <select class="form-select" id="material" name="material">
-          <option>Inox 430</option>
-          <option>Inox 304</option>
-          <option>Chapa Pintada</option>
-          <option>Alumínio</option>
-          <option>Outro</option>
-        </select>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="mb-3">
+          <label for="material" class="form-label small">Material</label>
+          <select id="material" name="material" class="form-select form-select-sm" required>
+            <option value="Inox 430">Inox 430</option>
+            <option value="Inox 304">Inox 304</option>
+            <option value="Chapa Pintada">Chapa Pintada</option>
+            <option value="Alumínio">Alumínio</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div id="outro_material" style="display: none;">
+          <div class="mb-3">
+            <label for="outro_nome" class="form-label small">Nome do Material</label>
+            <input type="text" class="form-control form-control-sm" id="outro_nome" name="outro_nome">
+          </div>
+          <div class="mb-3">
+            <label for="outro_valor" class="form-label small">Valor do Material</label>
+            <input type="number" class="form-control form-control-sm" id="outro_valor" name="outro_valor" min="0" step="0.1">
+          </div>
+        </div>
+        <div class="mb-3" id="espessura_div">
+          <label for="espessura" class="form-label small">Espessura (mm)</label>
+          <select id="espessura" name="espessura" class="form-select form-select-sm">
+            <option value="1,2">1,2</option>
+            <option value="1,5">1,5</option>
+            <option value="2,0">2,0</option>
+          </select>
+        </div>
       </div>
-      <div class="col-md-6">
-        <label for="espessura" class="form-label">Espessura (mm)</label>
-        <select class="form-select" id="espessura" name="espessura">
-          <option>1,2</option>
-          <option>1,5</option>
-          <option>2,0</option>
-        </select>
+      <div class="col-md-4">
+        <div class="mb-3">
+          <label for="saida" class="form-label small">Saída</label>
+          <select id="saida" name="saida" class="form-select form-select-sm" required>
+            <option value="Padrão">Padrão</option>
+            <option value="Oposta">Oposta</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="piso" class="form-label small">Piso</label>
+          <select id="piso" name="piso" class="form-select form-select-sm" required>
+            <option value="Por conta do cliente">Por conta do cliente</option>
+            <option value="Por conta da empresa">Por conta da empresa</option>
+          </select>
+        </div>
+        <div id="material_piso_div" style="display: none;">
+          <div class="mb-3">
+            <label for="material_piso" class="form-label small">Material do Piso da Cabine</label>
+            <select id="material_piso" name="material_piso" class="form-select form-select-sm">
+              <option value="Antiderrapante">Antiderrapante</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+          <div id="outro_material_piso" style="display: none;">
+            <div class="mb-3">
+              <label for="outro_nome_piso" class="form-label small">Nome do Material do Piso</label>
+              <input type="text" class="form-control form-control-sm" id="outro_nome_piso" name="outro_nome_piso">
+            </div>
+            <div class="mb-3">
+              <label for="outro_valor_piso" class="form-label small">Valor do Material do Piso</label>
+              <input type="number" class="form-control form-control-sm" id="outro_valor_piso" name="outro_valor_piso" min="0" step="0.1">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="mb-3">
+          <label for="largura_cabine" class="form-label small">Largura da Cabine (m)</label>
+          <input type="number" class="form-control form-control-sm" id="largura_cabine" name="largura_cabine" readonly>
+        </div>
+        <div class="mb-3">
+          <label for="comprimento_cabine" class="form-label small">Comprimento da Cabine (m)</label>
+          <input type="number" class="form-control form-control-sm" id="comprimento_cabine" name="comprimento_cabine" readonly>
+        </div>
+        <div class="mb-3">
+          <label for="altura_cabine" class="form-label small">Altura da Cabine (m)</label>
+          <input type="number" class="form-control form-control-sm" id="altura_cabine" name="altura_cabine" min="0.01" max="5.0" step="0.01" required>
+        </div>
       </div>
     </div>
-
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label for="saida" class="form-label">Saída</label>
-        <select class="form-select" id="saida" name="saida">
-          <option>Padrão</option>
-          <option>Oposta</option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label for="piso" class="form-label">Piso</label>
-        <select class="form-select" id="piso" name="piso">
-          <option>Por conta do cliente</option>
-          <option>Por conta da empresa</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label for="largura" class="form-label">Largura da Cabine (m)</label>
-        <input type="number" step="0.01" min="0" class="form-control" id="largura" name="largura" disabled>
-      </div>
-      <div class="col-md-6">
-        <label for="comprimento" class="form-label">Comprimento da Cabine (m)</label>
-        <input type="number" step="0.01" min="0" class="form-control" id="comprimento" name="comprimento" disabled>
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <label for="altura" class="form-label">Altura da Cabine (m)</label>
-      <input type="number" step="0.01" min="0" class="form-control" id="altura" name="altura">
-    </div>
-
-    <div class="d-flex justify-content-end">
-      <button type="submit" class="btn btn-primary">Salvar e Avançar</button>
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <a href="{% url 'simulador:portas' %}" class="btn btn-outline-secondary btn-sm btn-nav">
+        <i class="fas fa-chevron-left"></i> Voltar
+      </a>
+      <button type="submit" class="btn btn-primary btn-sm btn-nav">
+        Avançar <i class="fas fa-chevron-right"></i>
+      </button>
     </div>
   </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('cabineForm');
+  const material = document.getElementById('material');
+  const outroMaterial = document.getElementById('outro_material');
+  const espessuraDiv = document.getElementById('espessura_div');
+  const piso = document.getElementById('piso');
+  const materialPisoDiv = document.getElementById('material_piso_div');
+  const materialPiso = document.getElementById('material_piso');
+  const outroMaterialPiso = document.getElementById('outro_material_piso');
+
+  function updateMaterial() {
+    if (material.value === 'Outro') {
+      outroMaterial.style.display = 'block';
+      espessuraDiv.style.display = 'none';
+    } else {
+      outroMaterial.style.display = 'none';
+      espessuraDiv.style.display = 'block';
+      updateEspessuraOptions();
+    }
+  }
+
+  function updateEspessuraOptions() {
+    const espessura = document.getElementById('espessura');
+    espessura.innerHTML = '';
+    let options;
+    switch(material.value) {
+      case 'Alumínio':
+        options = ['1,2', '2,0'];
+        break;
+      default:
+        options = ['1,2', '1,5'];
+    }
+    options.forEach(opt => {
+      const option = document.createElement('option');
+      option.value = opt;
+      option.textContent = opt;
+      espessura.appendChild(option);
+    });
+  }
+
+  function updatePiso() {
+    materialPisoDiv.style.display = piso.value === 'Por conta da empresa' ? 'block' : 'none';
+  }
+
+  function updateMaterialPiso() {
+    outroMaterialPiso.style.display = materialPiso.value === 'Outro' ? 'block' : 'none';
+  }
+
+  material.addEventListener('change', updateMaterial);
+  piso.addEventListener('change', updatePiso);
+  materialPiso.addEventListener('change', updateMaterialPiso);
+
+  updateMaterial();
+  updatePiso();
+  updateMaterialPiso();
+
+  // Aqui você pode adicionar a lógica para calcular e preencher as dimensões da cabine
+  // baseado nos dados do elevador e das portas
+
+  form.addEventListener('submit', function(e) {
+    // Adicione aqui qualquer validação adicional que você queira fazer antes de enviar o formulário
+  });
+});
+</script>
 {% endblock %}

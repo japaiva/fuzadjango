@@ -1,104 +1,162 @@
 {% extends 'simulador/base.html' %}
-{% block title %}Portas - Simulador{% endblock %}
+{% block title %}Portas do Elevador - Simulador{% endblock %}
 {% block content %}
-<div class="container bg-light text-dark p-4 rounded shadow mt-4">
-  <h2 class="mb-4">Detalhes das Portas</h2>
-  <form method="post">
+<div class="container bg-light text-dark p-4 rounded shadow mt-4" style="max-width: 1000px;">
+  <h3 class="mb-4 text-center">Detalhes das Portas</h3>
+  <form method="post" id="portasForm">
     {% csrf_token %}
     <div class="row">
-      <div class="col-md-6">
-        <h5>Porta da Cabine</h5>
+      <div class="col-md-4">
+        <h5 class="mb-3">Porta da Cabine</h5>
         <div class="mb-3">
-          <label class="form-label">Modelo</label>
-          <select class="form-select" name="modelo_porta">
-            <option>Automática</option>
-            <option>Pantográfica</option>
-            <option>Pivotante</option>
-            <option>Guilhotina</option>
-            <option>Camarão</option>
-            <option>Cancela</option>
-            <option>Rampa</option>
+          <label for="modelo_porta" class="form-label small">Modelo Porta Cabine</label>
+          <select id="modelo_porta" name="modelo_porta" class="form-select form-select-sm" required>
+            <option value="Automática">Automática</option>
+            <option value="Pantográfica">Pantográfica</option>
+            <option value="Pivotante">Pivotante</option>
+            <option value="Guilhotina">Guilhotina</option>
+            <option value="Camarão">Camarão</option>
+            <option value="Cancela">Cancela</option>
+            <option value="Rampa">Rampa</option>
           </select>
         </div>
         <div class="mb-3">
-          <label class="form-label">Material</label>
-          <select class="form-select" name="material_porta">
-            <option>Inox</option>
-            <option>Chapa Pintada</option>
-            <option>Alumínio</option>
-            <option>Outro</option>
+          <label for="material_porta" class="form-label small">Material</label>
+          <select id="material_porta" name="material_porta" class="form-select form-select-sm">
+            <option value="Inox">Inox</option>
+            <option value="Chapa Pintada">Chapa Pintada</option>
+            <option value="Alumínio">Alumínio</option>
+            <option value="Outro">Outro</option>
           </select>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Folhas</label>
-          <select class="form-select" name="folhas_porta">
-            <option>2</option>
-            <option>3</option>
-            <option>Central</option>
+        <div id="outro_material_porta" style="display: none;">
+          <div class="mb-3">
+            <label for="outro_nome_porta" class="form-label small">Nome do Material</label>
+            <input type="text" class="form-control form-control-sm" id="outro_nome_porta" name="outro_nome_porta">
+          </div>
+          <div class="mb-3">
+            <label for="outro_valor_porta" class="form-label small">Valor do Material</label>
+            <input type="number" class="form-control form-control-sm" id="outro_valor_porta" name="outro_valor_porta" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="mb-3" id="folhas_porta_div" style="display: none;">
+          <label for="folhas_porta" class="form-label small">Folhas da Porta</label>
+          <select id="folhas_porta" name="folhas_porta" class="form-select form-select-sm">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="Central">Central</option>
           </select>
         </div>
       </div>
-      <div class="col-md-6">
-        <h5>Porta do Pavimento</h5>
+      <div class="col-md-4">
+        <h5 class="mb-3">Porta do Pavimento</h5>
         <div class="mb-3">
-          <label class="form-label">Modelo</label>
-          <select class="form-select" name="modelo_porta_pav">
-            <option>Automática</option>
-            <option>Pantográfica</option>
-            <option>Pivotante</option>
-            <option>Guilhotina</option>
-            <option>Camarão</option>
-            <option>Cancela</option>
-            <option>Rampa</option>
+          <label for="modelo_porta_pav" class="form-label small">Modelo Porta Pavimento</label>
+          <select id="modelo_porta_pav" name="modelo_porta_pav" class="form-select form-select-sm" required>
+            <option value="Automática">Automática</option>
+            <option value="Pantográfica">Pantográfica</option>
+            <option value="Pivotante">Pivotante</option>
+            <option value="Guilhotina">Guilhotina</option>
+            <option value="Camarão">Camarão</option>
+            <option value="Cancela">Cancela</option>
+            <option value="Rampa">Rampa</option>
           </select>
         </div>
         <div class="mb-3">
-          <label class="form-label">Material</label>
-          <select class="form-select" name="material_porta_pav">
-            <option>Inox</option>
-            <option>Chapa Pintada</option>
-            <option>Alumínio</option>
-            <option>Outro</option>
+          <label for="material_porta_pav" class="form-label small">Material</label>
+          <select id="material_porta_pav" name="material_porta_pav" class="form-select form-select-sm">
+            <option value="Inox">Inox</option>
+            <option value="Chapa Pintada">Chapa Pintada</option>
+            <option value="Alumínio">Alumínio</option>
+            <option value="Outro">Outro</option>
           </select>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Folhas</label>
-          <select class="form-select" name="folhas_porta_pav">
-            <option>2</option>
-            <option>3</option>
-            <option>Central</option>
+        <div id="outro_material_porta_pav" style="display: none;">
+          <div class="mb-3">
+            <label for="outro_nome_porta_pav" class="form-label small">Nome do Material</label>
+            <input type="text" class="form-control form-control-sm" id="outro_nome_porta_pav" name="outro_nome_porta_pav">
+          </div>
+          <div class="mb-3">
+            <label for="outro_valor_porta_pav" class="form-label small">Valor do Material</label>
+            <input type="number" class="form-control form-control-sm" id="outro_valor_porta_pav" name="outro_valor_porta_pav" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="mb-3" id="folhas_porta_pav_div" style="display: none;">
+          <label for="folhas_porta_pav" class="form-label small">Folhas da Porta</label>
+          <select id="folhas_porta_pav" name="folhas_porta_pav" class="form-select form-select-sm">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="Central">Central</option>
           </select>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h5 class="mb-3">Dimensões das Portas</h5>
+        <div class="mb-3">
+          <label for="largura_porta" class="form-label small">Largura Porta Cabine (m)</label>
+          <input type="number" class="form-control form-control-sm" id="largura_porta" name="largura_porta" min="0.1" max="5.0" step="0.01" value="0.8" required>
+        </div>
+        <div class="mb-3">
+          <label for="altura_porta" class="form-label small">Altura Porta Cabine (m)</label>
+          <input type="number" class="form-control form-control-sm" id="altura_porta" name="altura_porta" min="0.1" max="5.0" step="0.01" value="2.0" required>
+        </div>
+        <div class="mb-3">
+          <label for="largura_porta_pav" class="form-label small">Largura Porta Pavimento (m)</label>
+          <input type="number" class="form-control form-control-sm" id="largura_porta_pav" name="largura_porta_pav" min="0.1" max="5.0" step="0.01" value="0.8" required>
+        </div>
+        <div class="mb-3">
+          <label for="altura_porta_pav" class="form-label small">Altura Porta Pavimento (m)</label>
+          <input type="number" class="form-control form-control-sm" id="altura_porta_pav" name="altura_porta_pav" min="0.1" max="5.0" step="0.01" value="2.0" required>
         </div>
       </div>
     </div>
-    <hr>
-    <div class="row">
-      <div class="col-md-6">
-        <h5>Dimensões Cabine</h5>
-        <div class="mb-3">
-          <label class="form-label">Largura (m)</label>
-          <input type="number" class="form-control" step="0.01" min="0.1" name="largura_porta">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Altura (m)</label>
-          <input type="number" class="form-control" step="0.01" min="0.1" name="altura_porta">
-        </div>
-      </div>
-      <div class="col-md-6">
-        <h5>Dimensões Pavimento</h5>
-        <div class="mb-3">
-          <label class="form-label">Largura (m)</label>
-          <input type="number" class="form-control" step="0.01" min="0.1" name="largura_porta_pav">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Altura (m)</label>
-          <input type="number" class="form-control" step="0.01" min="0.1" name="altura_porta_pav">
-        </div>
-      </div>
-    </div>
-    <div class="d-flex justify-content-end">
-      <button type="submit" class="btn btn-primary">Salvar e Avançar</button>
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <a href="{% url 'simulador:elevador' %}" class="btn btn-outline-secondary btn-sm btn-nav">
+        <i class="fas fa-chevron-left"></i> Voltar
+      </a>
+      <button type="submit" class="btn btn-primary btn-sm btn-nav">
+        Avançar <i class="fas fa-chevron-right"></i>
+      </button>
     </div>
   </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('portasForm');
+  const modeloPorta = document.getElementById('modelo_porta');
+  const materialPorta = document.getElementById('material_porta');
+  const outroMaterialPorta = document.getElementById('outro_material_porta');
+  const folhasPortaDiv = document.getElementById('folhas_porta_div');
+
+  const modeloPortaPav = document.getElementById('modelo_porta_pav');
+  const materialPortaPav = document.getElementById('material_porta_pav');
+  const outroMaterialPortaPav = document.getElementById('outro_material_porta_pav');
+  const folhasPortaPavDiv = document.getElementById('folhas_porta_pav_div');
+
+  function updatePortaCabine() {
+    outroMaterialPorta.style.display = materialPorta.value === 'Outro' ? 'block' : 'none';
+    folhasPortaDiv.style.display = modeloPorta.value === 'Automática' ? 'block' : 'none';
+  }
+
+  function updatePortaPavimento() {
+    outroMaterialPortaPav.style.display = materialPortaPav.value === 'Outro' ? 'block' : 'none';
+    folhasPortaPavDiv.style.display = modeloPortaPav.value === 'Automática' ? 'block' : 'none';
+  }
+
+  modeloPorta.addEventListener('change', updatePortaCabine);
+  materialPorta.addEventListener('change', updatePortaCabine);
+  modeloPortaPav.addEventListener('change', updatePortaPavimento);
+  materialPortaPav.addEventListener('change', updatePortaPavimento);
+
+  updatePortaCabine();
+  updatePortaPavimento();
+
+  form.addEventListener('submit', function(e) {
+    // Adicione aqui qualquer validação adicional que você queira fazer antes de enviar o formulário
+  });
+});
+</script>
 {% endblock %}

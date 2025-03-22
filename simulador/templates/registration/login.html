@@ -1,12 +1,14 @@
 {% extends 'simulador/base.html' %}
-{% block title %}Login{% endblock %}
+
+{% block title %}Login - Elevadores Fuza{% endblock %}
+
 {% block content %}
-<div class="content-wrapper">
-    <h2 class="text-white mb-4">Entrar no Simulador</h2>
-    <form method="post" class="text-start">
+<div class="content-box">
+    <h2 class="mb-4">Login</h2>
+    <form method="post" class="text-center">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Entrar</button>
+        <button type="submit" class="btn btn-primary mt-3">Entrar</button>
     </form>
 </div>
 {% endblock %}

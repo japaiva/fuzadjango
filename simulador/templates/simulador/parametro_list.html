@@ -1,0 +1,92 @@
+<!-- templates/parametro_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}Lista de Parâmetros - Elevadores Fuza{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="mb-4">Lista de Parâmetros</h2>
+        <a href="{% url 'parametro_create' %}" class="btn btn-primary mb-3">
+            <i class="fas fa-plus"></i> Adicionar Parâmetro
+        </a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Parâmetro</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for parametro in parametros %}
+                    <tr>
+                        <td>{{ parametro.parametro }}</td>
+                        <td>{{ parametro.valor }}</td>
+                        <td>
+                            <a href="{% url 'parametro_update' parametro.id %}" class="btn btn-sm btn-info">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a href="{% url 'parametro_delete' parametro.id %}" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash-alt"></i> Excluir
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+<!-- templates/parametro_form.html -->
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Parâmetro - Elevadores Fuza{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="mb-4">{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Parâmetro</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger">
+                            {% for error in field.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Salvar
+            </button>
+            <a href="{% url 'parametro_list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </form>
+    </div>
+{% endblock %}
+
+<!-- templates/parametro_confirm_delete.html -->
+{% extends 'base.html' %}
+
+{% block title %}Excluir Parâmetro - Elevadores Fuza{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="mb-4">Excluir Parâmetro</h2>
+        <p>Tem certeza que deseja excluir o parâmetro "{{ parametro.parametro }}"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i> Confirmar Exclusão
+            </button>
+            <a href="{% url 'parametro_list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </form>
+    </div>
+{% endblock %}

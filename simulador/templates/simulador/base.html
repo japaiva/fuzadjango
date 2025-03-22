@@ -6,80 +6,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Elevadores Fuza{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            background: url("{% static 'simulador/elevator.jpg' %}") no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Arial', sans-serif;
-            color: white;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-            padding-top: 70px; /* Aqui ajusta conforme a navbar */
-        }
-
-        .navbar {
-            background-color: rgba(0, 0, 0, 0.8) !important;
-        }
-
-        .btn-primary:hover {
-            background-color: #d9534f;
-            border-color: #d43f3a;
-        }
-
-        .content-wrapper {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 2rem;
-            border-radius: 1rem;
-            max-width: 500px;
-            margin: 15vh auto 0 auto;
-            text-align: center;
-        }
-
-        .app-title {
-            font-size: 2rem;
-            font-weight: bold;
-            line-height: 1.3;
-        }
-
-        .welcome-text {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        h1, h2 {
-            margin-bottom: 0.5rem;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">Simulador Fuza</a>
-            <div class="collapse navbar-collapse justify-content-end">
+            <a class="navbar-brand" href="{% url 'simulador:home' %}">
+                <i class="fas fa-elevator"></i> Elevadores Fuza
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 {% if user.is_authenticated %}
-                    <span class="navbar-text me-3 text-white">Olá, {{ user.username }}</span>
-                    <a class="btn btn-outline-light" href="{% url 'logout' %}">Logout</a>
+                    <span class="navbar-text me-3 text-white">
+                        <i class="fas fa-user"></i> Olá, {{ user.username }}
+                    </span>
+                    <a class="btn btn-outline-light" href="{% url 'simulador:logout' %}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
                 {% else %}
                     <a class="btn btn-warning fw-semibold d-flex align-items-center gap-2" href="{% url 'login' %}">
-                        <i class="bi bi-box-arrow-in-right"></i> Login
+                        <i class="fas fa-sign-in-alt"></i> Login
                     </a>
                 {% endif %}
             </div>
         </div>
     </nav>
 
-    <main>
-        {% block content %}{% endblock %}
+    <main class="container d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 56px);">
+        {% if messages %}
+            <div class="messages position-fixed top-0 start-50 translate-middle-x mt-5">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if use_content_box %}
+            <div class="content-box">
+            {% endif %}
+                {% block content %}{% endblock %}
+            {% if use_content_box %}
+            </div>
+        {% endif %}
     </main>
 
-    <script>
-        function verificaInox(select) {
-            const divInox = document.getElementById('tipo-inox');
-            divInox.style.display = select.value === 'inox' ? 'block' : 'none';
-        }
-    </script>
+    <footer class="footer mt-auto py-3">
+        <div class="container text-center">
+            <span class="text-white">&copy; 2025 Elevadores Fuza. Todos os direitos reservados.</span>
+        </div>
+    </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
