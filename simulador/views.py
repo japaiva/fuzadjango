@@ -11,7 +11,11 @@ from .forms import UsuarioForm, CustoForm, ParametroForm
 # PAGINAS
 
 def home(request):
-    return render(request, 'simulador/home.html', {'use_content_box': True})
+    context = {
+        'use_content_box': True,
+        'user_level': request.user.nivel if request.user.is_authenticated else None
+    }
+    return render(request, 'simulador/home.html', context)
 
 @login_required
 def inicio(request):
@@ -41,7 +45,6 @@ def elevador(request):
         request.session['elevador_data'] = request.POST  # ou fazer um tratamento adequado
         return redirect('simulador:portas')  # <- Certifique-se de que está indo para a próxima etapa
     return render(request, 'simulador/elevador.html')
-
 
 @login_required
 def portas(request):
@@ -149,18 +152,20 @@ def logout_view(request):
 
 # CRUDS
 
+# Views para USUARIOS 
+
 def is_admin(user):
     return user.nivel == 'admin'
 
 def is_engenharia(user):
     return user.nivel in ['admin', 'engenharia']
 
-# Views para Usuários
 @login_required
 @user_passes_test(is_admin)
 def usuario_list(request):
-    usuarios = Usuario.objects.all()
-    return render(request, 'usuario_list.html', {'usuarios': usuarios})
+    # Buscar apenas usuários ativos
+    usuarios = Usuario.objects.filter(is_active=True)
+    return render(request, 'simulador/usuario_list.html', {'usuarios': usuarios})
 
 @login_required
 @user_passes_test(is_admin)
@@ -170,10 +175,10 @@ def usuario_create(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Usuário criado com sucesso.')
-            return redirect('usuario_list')
+            return redirect('simulador:usuario_list')
     else:
         form = UsuarioForm()
-    return render(request, 'usuario_form.html', {'form': form})
+    return render(request, 'simulador/usuario_form.html', {'form': form})
 
 @login_required
 @user_passes_test(is_admin)
@@ -184,27 +189,33 @@ def usuario_update(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Usuário atualizado com sucesso.')
-            return redirect('usuario_list')
+            return redirect('simulador:usuario_list')
     else:
         form = UsuarioForm(instance=usuario)
-    return render(request, 'usuario_form.html', {'form': form})
+    return render(request, 'simulador/usuario_form.html', {'form': form})
+
 
 @login_required
 @user_passes_test(is_admin)
 def usuario_delete(request, pk):
     usuario = get_object_or_404(Usuario, pk=pk)
     if request.method == 'POST':
-        usuario.delete()
-        messages.success(request, 'Usuário excluído com sucesso.')
-        return redirect('usuario_list')
-    return render(request, 'usuario_confirm_delete.html', {'usuario': usuario})
+        try:
+            # Em vez de excluir, apenas desative o usuário
+            usuario.is_active = False
+            usuario.save()
+            messages.success(request, 'Usuário desativado com sucesso.')
+        except Exception as e:
+            messages.error(request, f'Erro ao desativar usuário: {str(e)}')
+        return redirect('simulador:usuario_list')
+    return render(request, 'simulador/usuario_confirm_delete.html', {'usuario': usuario})
 
-# Views para Custos (similar para Parâmetros)
+# Views para Custos 
 @login_required
 @user_passes_test(is_engenharia)
 def custo_list(request):
     custos = Custo.objects.all()
-    return render(request, 'custo_list.html', {'custos': custos})
+    return render(request, 'simulador/custo_list.html', {'custos': custos})
 
 @login_required
 @user_passes_test(is_engenharia)
@@ -214,10 +225,10 @@ def custo_create(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Custo criado com sucesso.')
-            return redirect('custo_list')
+            return redirect('simulador:custo_list')
     else:
         form = CustoForm()
-    return render(request, 'custo_form.html', {'form': form})
+    return render(request, 'simulador/custo_form.html', {'form': form})
 
 @login_required
 @user_passes_test(is_engenharia)
@@ -228,10 +239,10 @@ def custo_update(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Custo atualizado com sucesso.')
-            return redirect('custo_list')
+            return redirect('simulador:custo_list')
     else:
         form = CustoForm(instance=custo)
-    return render(request, 'custo_form.html', {'form': form})
+    return render(request, 'simulador/custo_form.html', {'form': form})
 
 @login_required
 @user_passes_test(is_engenharia)
@@ -240,8 +251,8 @@ def custo_delete(request, pk):
     if request.method == 'POST':
         custo.delete()
         messages.success(request, 'Custo excluído com sucesso.')
-        return redirect('custo_list')
-    return render(request, 'custo_confirm_delete.html', {'custo': custo})
+        return redirect('simulador:custo_list')
+    return render(request, 'simulador/custo_confirm_delete.html', {'custo': custo})
 
 def is_admin(user):
     return user.nivel == 'admin'
@@ -250,13 +261,13 @@ def is_admin(user):
 @user_passes_test(is_admin)
 def parametro_list(request):
     parametros = Parametro.objects.all()
-    return render(request, 'seu_app/parametro_list.html', {'parametros': parametros})
+    return render(request, 'simulador/parametro_list.html', {'parametros': parametros})
 
 @login_required
 @user_passes_test(is_admin)
 def parametro_detail(request, pk):
     parametro = get_object_or_404(Parametro, pk=pk)
-    return render(request, 'seu_app/parametro_detail.html', {'parametro': parametro})
+    return render(request, 'simulador/parametro_detail.html', {'parametro': parametro})
 
 @login_required
 @user_passes_test(is_admin)
@@ -266,10 +277,10 @@ def parametro_create(request):
         if form.is_valid():
             parametro = form.save()
             messages.success(request, 'Parâmetro criado com sucesso.')
-            return redirect('parametro_detail', pk=parametro.pk)
+            return redirect('simulador:parametro_detail', pk=parametro.pk)
     else:
         form = ParametroForm()
-    return render(request, 'seu_app/parametro_form.html', {'form': form})
+    return render(request, 'simulador/parametro_form.html', {'form': form})
 
 @login_required
 @user_passes_test(is_admin)
@@ -280,10 +291,10 @@ def parametro_update(request, pk):
         if form.is_valid():
             parametro = form.save()
             messages.success(request, 'Parâmetro atualizado com sucesso.')
-            return redirect('parametro_detail', pk=parametro.pk)
+            return redirect('simulador:parametro_detail', pk=parametro.pk)
     else:
         form = ParametroForm(instance=parametro)
-    return render(request, 'seu_app/parametro_form.html', {'form': form})
+    return render(request, 'simulador/parametro_form.html', {'form': form})
 
 @login_required
 @user_passes_test(is_admin)
@@ -292,5 +303,5 @@ def parametro_delete(request, pk):
     if request.method == 'POST':
         parametro.delete()
         messages.success(request, 'Parâmetro excluído com sucesso.')
-        return redirect('parametro_list')
-    return render(request, 'seu_app/parametro_confirm_delete.html', {'parametro': parametro})
+        return redirect('simulador:parametro_list')
+    return render(request, 'simulador/parametro_confirm_delete.html', {'parametro': parametro})

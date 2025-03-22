@@ -1,7 +1,7 @@
 # management/commands/init_db.py
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from .utils import hash_password
+from ...utils import hash_password
 
 User = get_user_model()
 

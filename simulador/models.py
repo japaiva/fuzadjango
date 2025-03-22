@@ -24,11 +24,14 @@ class Usuario(AbstractUser):
         ('engenharia', 'Engenharia'),
         ('vendedor', 'Vendedor'),
     ]
- 
+
+    # Desabilitar relacionamentos explicitamente
+    groups = None  # Remove o relacionamento com grupos
+    user_permissions = None  # Remove o relacionamento com permissões individuais
+    
     nivel = models.CharField(max_length=20, choices=NIVEL_CHOICES)
-    last_login = models.DateTimeField(blank=True, null=True)
+    # Removi o last_login duplicado
     is_superuser = models.BooleanField(default=False)
-    last_login = models.DateTimeField(blank=True, null=True)
     last_name = models.CharField(max_length=150, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
