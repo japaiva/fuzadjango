@@ -1,6 +1,6 @@
 {% extends 'simulador/base.html' %}
 
-{% block title %}Excluir Usuário - Elevadores Fuza{% endblock %}
+{% block title %}Excluir Parâmetro - Elevadores Fuza{% endblock %}
 
 {% block content %}
 <div class="container bg-light text-dark p-3 rounded shadow" style="max-width: 600px;">
@@ -9,14 +9,14 @@
     </div>
     
     <div class="alert alert-danger py-2">
-        <p class="mb-1">Tem certeza que deseja desativar o usuário <strong>{{ usuario.username }}</strong>?</p>
+        <p class="mb-1">Tem certeza que deseja excluir o parâmetro <strong>{{ parametro.nome }}</strong>?</p>
         <small><i class="fas fa-exclamation-triangle"></i> Esta ação não pode ser desfeita.</small>
     </div>
     
     <form method="post">
         {% csrf_token %}
         <div class="d-flex justify-content-between mt-4">
-            <a href="{% url 'simulador:usuario_list' %}" class="btn btn-outline-secondary btn-sm">
+            <a href="{% url 'simulador:parametro_list' %}" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-arrow-left"></i> Voltar
             </a>
             <button type="submit" class="btn btn-danger btn-sm">

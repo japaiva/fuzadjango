@@ -1,12 +1,21 @@
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import logout
 from django.contrib import messages
+from django.contrib.messages import get_messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .utils.calculations import calcular_dimensionamento_completo, calcular_componentes
 
 from .models import Usuario, Custo, Parametro
 from .forms import UsuarioForm, CustoForm, ParametroForm
+
+# Funções auxiliares para verificação de permissões
+def is_admin(user):
+    return user.nivel == 'admin'
+
+def is_engenharia(user):
+    return user.nivel in ['admin', 'engenharia']
 
 # PAGINAS
 
@@ -153,18 +162,26 @@ def logout_view(request):
 # CRUDS
 
 # Views para USUARIOS 
-
-def is_admin(user):
-    return user.nivel == 'admin'
-
-def is_engenharia(user):
-    return user.nivel in ['admin', 'engenharia']
-
 @login_required
 @user_passes_test(is_admin)
 def usuario_list(request):
-    # Buscar apenas usuários ativos
-    usuarios = Usuario.objects.filter(is_active=True)
+    # Ordena por username para garantir consistência na paginação
+    usuarios_list = Usuario.objects.filter(is_active=True).order_by('username')
+    
+    # Configurar paginação (10 itens por página)
+    paginator = Paginator(usuarios_list, 10)
+    page = request.GET.get('page', 1)
+    
+    try:
+        usuarios = paginator.page(page)
+    except PageNotAnInteger:
+        # Se a página não for um inteiro, exibe a primeira página
+        usuarios = paginator.page(1)
+
+    except EmptyPage:
+        # Se a página estiver fora do intervalo, exibe a última página
+        usuarios = paginator.page(paginator.num_pages)
+    
     return render(request, 'simulador/usuario_list.html', {'usuarios': usuarios})
 
 @login_required
@@ -175,6 +192,9 @@ def usuario_create(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Usuário criado com sucesso.')
+            # Limpa todas as mensagens após adicionar para evitar duplicação
+            storage = messages.get_messages(request)
+            storage.used = True
             return redirect('simulador:usuario_list')
     else:
         form = UsuarioForm()
@@ -189,11 +209,13 @@ def usuario_update(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Usuário atualizado com sucesso.')
+            # Limpa todas as mensagens após adicionar para evitar duplicação
+            storage = messages.get_messages(request)
+            storage.used = True
             return redirect('simulador:usuario_list')
     else:
         form = UsuarioForm(instance=usuario)
     return render(request, 'simulador/usuario_form.html', {'form': form})
-
 
 @login_required
 @user_passes_test(is_admin)
@@ -205,6 +227,9 @@ def usuario_delete(request, pk):
             usuario.is_active = False
             usuario.save()
             messages.success(request, 'Usuário desativado com sucesso.')
+            # Limpa todas as mensagens após adicionar para evitar duplicação
+            storage = messages.get_messages(request)
+            storage.used = True
         except Exception as e:
             messages.error(request, f'Erro ao desativar usuário: {str(e)}')
         return redirect('simulador:usuario_list')
@@ -214,7 +239,21 @@ def usuario_delete(request, pk):
 @login_required
 @user_passes_test(is_engenharia)
 def custo_list(request):
-    custos = Custo.objects.all()
+    custos_list = Custo.objects.all().order_by('codigo')
+    
+    # Configurar paginação (10 itens por página)
+    paginator = Paginator(custos_list, 10)
+    page = request.GET.get('page', 1)
+    
+    try:
+        custos = paginator.page(page)
+    except PageNotAnInteger:
+        # Se a página não for um inteiro, exibe a primeira página
+        custos = paginator.page(1)
+    except EmptyPage:
+        # Se a página estiver fora do intervalo, exibe a última página
+        custos = paginator.page(paginator.num_pages)
+    
     return render(request, 'simulador/custo_list.html', {'custos': custos})
 
 @login_required
@@ -225,6 +264,9 @@ def custo_create(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Custo criado com sucesso.')
+            # Limpa todas as mensagens após adicionar para evitar duplicação
+            storage = messages.get_messages(request)
+            storage.used = True
             return redirect('simulador:custo_list')
     else:
         form = CustoForm()
@@ -239,6 +281,9 @@ def custo_update(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Custo atualizado com sucesso.')
+            # Limpa todas as mensagens após adicionar para evitar duplicação
+            storage = messages.get_messages(request)
+            storage.used = True
             return redirect('simulador:custo_list')
     else:
         form = CustoForm(instance=custo)
@@ -251,16 +296,31 @@ def custo_delete(request, pk):
     if request.method == 'POST':
         custo.delete()
         messages.success(request, 'Custo excluído com sucesso.')
+        # Limpa todas as mensagens após adicionar para evitar duplicação
+        storage = messages.get_messages(request)
+        storage.used = True
         return redirect('simulador:custo_list')
     return render(request, 'simulador/custo_confirm_delete.html', {'custo': custo})
 
-def is_admin(user):
-    return user.nivel == 'admin'
-
+# Views para Parâmetros
 @login_required
 @user_passes_test(is_admin)
 def parametro_list(request):
-    parametros = Parametro.objects.all()
+    parametros_list = Parametro.objects.all().order_by('nome')
+    
+    # Configurar paginação (10 itens por página)
+    paginator = Paginator(parametros_list, 10)
+    page = request.GET.get('page', 1)
+    
+    try:
+        parametros = paginator.page(page)
+    except PageNotAnInteger:
+        # Se a página não for um inteiro, exibe a primeira página
+        parametros = paginator.page(1)
+    except EmptyPage:
+        # Se a página estiver fora do intervalo, exibe a última página
+        parametros = paginator.page(paginator.num_pages)
+    
     return render(request, 'simulador/parametro_list.html', {'parametros': parametros})
 
 @login_required
@@ -277,6 +337,9 @@ def parametro_create(request):
         if form.is_valid():
             parametro = form.save()
             messages.success(request, 'Parâmetro criado com sucesso.')
+            # Limpa todas as mensagens após adicionar para evitar duplicação
+            storage = messages.get_messages(request)
+            storage.used = True
             return redirect('simulador:parametro_detail', pk=parametro.pk)
     else:
         form = ParametroForm()
@@ -291,6 +354,9 @@ def parametro_update(request, pk):
         if form.is_valid():
             parametro = form.save()
             messages.success(request, 'Parâmetro atualizado com sucesso.')
+            # Limpa todas as mensagens após adicionar para evitar duplicação
+            storage = messages.get_messages(request)
+            storage.used = True
             return redirect('simulador:parametro_detail', pk=parametro.pk)
     else:
         form = ParametroForm(instance=parametro)
@@ -303,5 +369,8 @@ def parametro_delete(request, pk):
     if request.method == 'POST':
         parametro.delete()
         messages.success(request, 'Parâmetro excluído com sucesso.')
+        # Limpa todas as mensagens após adicionar para evitar duplicação
+        storage = messages.get_messages(request)
+        storage.used = True
         return redirect('simulador:parametro_list')
     return render(request, 'simulador/parametro_confirm_delete.html', {'parametro': parametro})

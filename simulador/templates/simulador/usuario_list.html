@@ -2,31 +2,19 @@
 {% block title %}Usuários | {{ block.super }}{% endblock %}
 
 {% block content %}
-<div class="container bg-light text-dark p-4 rounded shadow mt-4" style="max-width: 1000px;">
-    <h3 class="mb-4 text-center">Usuários</h3>
-    
-    <div class="d-flex justify-content-end mb-3">
-        <a href="{% url 'simulador:usuario_create' %}" class="btn btn-primary btn-sm">
-            <i class="fas fa-user-plus"></i> Adicionar Usuário
-        </a>
+<div class="container bg-light text-dark p-3 rounded shadow" style="max-width: 900px;">
+    <div class="border-bottom pb-2 mb-3">
+        <h5 class="mb-0">Lista de Usuários</h5>
     </div>
     
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-    
     <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead>
+        <table class="table table-hover align-middle compact-table">
+            <thead class="table-light">
                 <tr>
                     <th>Username</th>
                     <th>Email</th>
                     <th>Nível</th>
-                    <th>Ações</th>
+                    <th class="text-end" style="width: 100px">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,25 +22,140 @@
                     <tr>
                         <td>{{ usuario.username }}</td>
                         <td>{{ usuario.email }}</td>
-                        <td>{{ usuario.nivel }}</td>
                         <td>
-                            <a href="{% url 'simulador:usuario_update' usuario.id %}" class="btn btn-sm btn-info">
-                                <i class="fas fa-edit"></i>
+                            <span class="badge {% if usuario.nivel == 'admin' %}bg-primary{% elif usuario.nivel == 'engenharia' %}bg-success{% else %}bg-secondary{% endif %}">
+                                {{ usuario.nivel }}
+                            </span>
+                        </td>
+                        <td class="text-end action-buttons">
+                            <a href="{% url 'simulador:usuario_update' usuario.id %}" class="btn btn-outline-primary action-btn" title="Editar">
+                                <i class="fas fa-edit fa-sm"></i>
                             </a>
-                            <a href="{% url 'simulador:usuario_delete' usuario.id %}" class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash-alt"></i>
+                            <a href="{% url 'simulador:usuario_delete' usuario.id %}" class="btn btn-outline-danger action-btn" title="Excluir">
+                                <i class="fas fa-trash-alt fa-sm"></i>
                             </a>
                         </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-2 text-muted">Nenhum usuário encontrado</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
     
-    <div class="d-flex justify-content-start mt-4">
-        <a href="{% url 'simulador:home' %}" class="btn btn-outline-secondary btn-sm btn-nav">
+    <!-- Navegação em linha única: Voltar, paginação e Adicionar -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <a href="{% url 'simulador:home' %}" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-chevron-left"></i> Voltar
+        </a>
+        
+        {% if usuarios.paginator.num_pages > 1 %}
+        <nav aria-label="Navegação de página">
+            <ul class="pagination pagination-sm mb-0">
+                {% if usuarios.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="Primeiro">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ usuarios.previous_page_number }}" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo;&laquo;</span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo;</span>
+                    </li>
+                {% endif %}
+                
+                {% for i in usuarios.paginator.page_range %}
+                    {% if usuarios.number == i %}
+                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                    {% elif i > usuarios.number|add:'-3' and i < usuarios.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if usuarios.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ usuarios.next_page_number }}" aria-label="Próximo">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ usuarios.paginator.num_pages }}" aria-label="Último">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&raquo;</span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">&raquo;&raquo;</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% else %}
+        <div></div> <!-- Espaçador para manter o layout quando não há paginação -->
+        {% endif %}
+        
+        <a href="{% url 'simulador:usuario_create' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-user-plus"></i> Novo Usuário
         </a>
     </div>
 </div>
+
+<style>
+/* Estilos para a tabela compacta */
+.compact-table {
+    font-size: 0.875rem;
+}
+
+.compact-table th,
+.compact-table td {
+    padding: 0.25rem 0.5rem;
+    vertical-align: middle;
+}
+
+.compact-table thead th {
+    font-weight: 500;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+}
+
+/* Botões de ação */
+.action-buttons {
+    white-space: nowrap;
+}
+
+.action-btn {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.75rem;
+    line-height: 1;
+    border-radius: 0.2rem;
+    margin-left: 0.1rem;
+}
+
+.action-btn i {
+    font-size: 0.75rem;
+}
+
+/* Estilos para a paginação */
+.pagination {
+    margin-bottom: 0;
+}
+
+.page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+</style>
 {% endblock %}

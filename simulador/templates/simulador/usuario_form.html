@@ -1,29 +1,31 @@
 {% extends 'simulador/base.html' %}
 
-{% block title %}{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Usuário - Elevadores Fuza{% endblock %}
+{% block title %}{% if form.instance.pk %}Editar{% else %}Novo{% endif %} Usuário - Elevadores Fuza{% endblock %}
 
 {% block content %}
-<div class="container bg-light text-dark p-4 rounded shadow mt-4" style="max-width: 1000px;">
-    <h3 class="mb-4 text-center">{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Usuário</h3>
+<div class="container bg-light text-dark p-3 rounded shadow" style="max-width: 800px;">
+    <div class="border-bottom pb-2 mb-3">
+        <h5 class="mb-0">{% if form.instance.pk %}Editar{% else %}Novo{% endif %} Usuário</h5>
+    </div>
     
     <form method="post">
         {% csrf_token %}
         
         {% if form.non_field_errors %}
-            <div class="alert alert-danger">
+            <div class="alert alert-danger py-2">
                 {% for error in form.non_field_errors %}
                     {{ error }}
                 {% endfor %}
             </div>
         {% endif %}
         
-        <div class="row">
+        <div class="row g-3">
             <!-- Username -->
-            <div class="col-md-6 mb-3">
-                <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}</label>
+            <div class="col-md-6">
+                <label for="{{ form.username.id_for_label }}" class="form-label small">{{ form.username.label }}</label>
                 {{ form.username }}
                 {% if form.username.errors %}
-                    <div class="text-danger">
+                    <div class="text-danger small">
                         {% for error in form.username.errors %}
                             {{ error }}
                         {% endfor %}
@@ -32,11 +34,11 @@
             </div>
             
             <!-- Email -->
-            <div class="col-md-6 mb-3">
-                <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+            <div class="col-md-6">
+                <label for="{{ form.email.id_for_label }}" class="form-label small">{{ form.email.label }}</label>
                 {{ form.email }}
                 {% if form.email.errors %}
-                    <div class="text-danger">
+                    <div class="text-danger small">
                         {% for error in form.email.errors %}
                             {{ error }}
                         {% endfor %}
@@ -45,16 +47,16 @@
             </div>
             
             <!-- Senha - mostrar de forma diferente para criação e edição -->
-            <div class="col-md-6 mb-3">
-                <label for="{{ form.password.id_for_label }}" class="form-label">{{ form.password.label }}</label>
+            <div class="col-md-6">
+                <label for="{{ form.password.id_for_label }}" class="form-label small">{{ form.password.label }}</label>
                 {% if form.instance.pk %}
-                    <input type="password" name="password" id="{{ form.password.id_for_label }}" class="form-control" placeholder="Digite para alterar a senha">
-                    <small class="form-text text-muted">Deixe em branco para manter a senha atual.</small>
+                    <input type="password" name="password" id="{{ form.password.id_for_label }}" class="form-control form-control-sm" placeholder="Digite para alterar a senha">
+                    <div class="form-text text-muted small">Deixe em branco para manter a senha atual.</div>
                 {% else %}
-                    <input type="password" name="password" id="{{ form.password.id_for_label }}" class="form-control" required>
+                    <input type="password" name="password" id="{{ form.password.id_for_label }}" class="form-control form-control-sm" required>
                 {% endif %}
                 {% if form.password.errors %}
-                    <div class="text-danger">
+                    <div class="text-danger small">
                         {% for error in form.password.errors %}
                             {{ error }}
                         {% endfor %}
@@ -63,11 +65,11 @@
             </div>
             
             <!-- Nível de Acesso -->
-            <div class="col-md-6 mb-3">
-                <label for="{{ form.nivel.id_for_label }}" class="form-label">{{ form.nivel.label }}</label>
+            <div class="col-md-6">
+                <label for="{{ form.nivel.id_for_label }}" class="form-label small">{{ form.nivel.label }}</label>
                 {{ form.nivel }}
                 {% if form.nivel.errors %}
-                    <div class="text-danger">
+                    <div class="text-danger small">
                         {% for error in form.nivel.errors %}
                             {{ error }}
                         {% endfor %}
@@ -76,11 +78,11 @@
             </div>
         </div>
         
-        <div class="d-flex justify-content-between align-items-center mt-4">
-            <a href="{% url 'simulador:usuario_list' %}" class="btn btn-outline-secondary btn-sm btn-nav">
-                <i class="fas fa-times"></i> Cancelar
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'simulador:usuario_list' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Voltar
             </a>
-            <button type="submit" class="btn btn-primary btn-sm btn-nav">
+            <button type="submit" class="btn btn-primary btn-sm">
                 <i class="fas fa-save"></i> Salvar
             </button>
         </div>

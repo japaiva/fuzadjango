@@ -3,14 +3,7 @@
 {% block title %}Simulador Custo Elevador{% endblock %}
 
 {% block content %}
-<h2 class="mb-3">Bem-vindo</h2>
+
 <h1 class="mb-4">Simulador Custo Elevador</h1>
 
-{% if user.is_authenticated %}
-    <a href="{% url 'simulador:cliente' %}" class="btn btn-primary btn-lg">
-        <i class="fas fa-play"></i> Começar Simulação
-    </a>
-{% else %}
-    <p class="lead mb-4">Faça o login para usar o simulador</p>
-{% endif %}
 {% endblock %}

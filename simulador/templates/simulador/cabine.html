@@ -1,14 +1,17 @@
 {% extends 'simulador/base.html' %}
 {% block title %}Cabine do Elevador - Simulador{% endblock %}
 {% block content %}
-<div class="container bg-light text-dark p-4 rounded shadow mt-4" style="max-width: 1000px;">
-  <h3 class="mb-4 text-center">Detalhes da Cabine</h3>
+<div class="container bg-light text-dark p-3 rounded shadow" style="max-width: 900px;">
+  <div class="border-bottom pb-2 mb-3">
+    <h5 class="mb-0">Detalhes da Cabine</h5>
+  </div>
+  
   <form method="post" id="cabineForm">
     {% csrf_token %}
-    <div class="row">
+    <div class="row g-2">
       <div class="col-md-4">
-        <div class="mb-3">
-          <label for="material" class="form-label small">Material</label>
+        <div class="mb-2">
+          <label for="material" class="form-label small mb-1">Material</label>
           <select id="material" name="material" class="form-select form-select-sm" required>
             <option value="Inox 430">Inox 430</option>
             <option value="Inox 304">Inox 304</option>
@@ -18,17 +21,17 @@
           </select>
         </div>
         <div id="outro_material" style="display: none;">
-          <div class="mb-3">
-            <label for="outro_nome" class="form-label small">Nome do Material</label>
+          <div class="mb-2">
+            <label for="outro_nome" class="form-label small mb-1">Nome do Material</label>
             <input type="text" class="form-control form-control-sm" id="outro_nome" name="outro_nome">
           </div>
-          <div class="mb-3">
-            <label for="outro_valor" class="form-label small">Valor do Material</label>
+          <div class="mb-2">
+            <label for="outro_valor" class="form-label small mb-1">Valor do Material</label>
             <input type="number" class="form-control form-control-sm" id="outro_valor" name="outro_valor" min="0" step="0.1">
           </div>
         </div>
-        <div class="mb-3" id="espessura_div">
-          <label for="espessura" class="form-label small">Espessura (mm)</label>
+        <div class="mb-2" id="espessura_div">
+          <label for="espessura" class="form-label small mb-1">Espessura (mm)</label>
           <select id="espessura" name="espessura" class="form-select form-select-sm">
             <option value="1,2">1,2</option>
             <option value="1,5">1,5</option>
@@ -36,61 +39,64 @@
           </select>
         </div>
       </div>
+      
       <div class="col-md-4">
-        <div class="mb-3">
-          <label for="saida" class="form-label small">Saída</label>
+        <div class="mb-2">
+          <label for="saida" class="form-label small mb-1">Saída</label>
           <select id="saida" name="saida" class="form-select form-select-sm" required>
             <option value="Padrão">Padrão</option>
             <option value="Oposta">Oposta</option>
           </select>
         </div>
-        <div class="mb-3">
-          <label for="piso" class="form-label small">Piso</label>
+        <div class="mb-2">
+          <label for="piso" class="form-label small mb-1">Piso</label>
           <select id="piso" name="piso" class="form-select form-select-sm" required>
             <option value="Por conta do cliente">Por conta do cliente</option>
             <option value="Por conta da empresa">Por conta da empresa</option>
           </select>
         </div>
         <div id="material_piso_div" style="display: none;">
-          <div class="mb-3">
-            <label for="material_piso" class="form-label small">Material do Piso da Cabine</label>
+          <div class="mb-2">
+            <label for="material_piso" class="form-label small mb-1">Material do Piso da Cabine</label>
             <select id="material_piso" name="material_piso" class="form-select form-select-sm">
               <option value="Antiderrapante">Antiderrapante</option>
               <option value="Outro">Outro</option>
             </select>
           </div>
           <div id="outro_material_piso" style="display: none;">
-            <div class="mb-3">
-              <label for="outro_nome_piso" class="form-label small">Nome do Material do Piso</label>
+            <div class="mb-2">
+              <label for="outro_nome_piso" class="form-label small mb-1">Nome do Material do Piso</label>
               <input type="text" class="form-control form-control-sm" id="outro_nome_piso" name="outro_nome_piso">
             </div>
-            <div class="mb-3">
-              <label for="outro_valor_piso" class="form-label small">Valor do Material do Piso</label>
+            <div class="mb-2">
+              <label for="outro_valor_piso" class="form-label small mb-1">Valor do Material do Piso</label>
               <input type="number" class="form-control form-control-sm" id="outro_valor_piso" name="outro_valor_piso" min="0" step="0.1">
             </div>
           </div>
         </div>
       </div>
+      
       <div class="col-md-4">
-        <div class="mb-3">
-          <label for="largura_cabine" class="form-label small">Largura da Cabine (m)</label>
+        <div class="mb-2">
+          <label for="largura_cabine" class="form-label small mb-1">Largura da Cabine (m)</label>
           <input type="number" class="form-control form-control-sm" id="largura_cabine" name="largura_cabine" readonly>
         </div>
-        <div class="mb-3">
-          <label for="comprimento_cabine" class="form-label small">Comprimento da Cabine (m)</label>
+        <div class="mb-2">
+          <label for="comprimento_cabine" class="form-label small mb-1">Comprimento da Cabine (m)</label>
           <input type="number" class="form-control form-control-sm" id="comprimento_cabine" name="comprimento_cabine" readonly>
         </div>
-        <div class="mb-3">
-          <label for="altura_cabine" class="form-label small">Altura da Cabine (m)</label>
+        <div class="mb-2">
+          <label for="altura_cabine" class="form-label small mb-1">Altura da Cabine (m)</label>
           <input type="number" class="form-control form-control-sm" id="altura_cabine" name="altura_cabine" min="0.01" max="5.0" step="0.01" required>
         </div>
       </div>
     </div>
-    <div class="d-flex justify-content-between align-items-center mt-4">
-      <a href="{% url 'simulador:portas' %}" class="btn btn-outline-secondary btn-sm btn-nav">
+    
+    <div class="d-flex justify-content-between mt-3">
+      <a href="{% url 'simulador:portas' %}" class="btn btn-outline-secondary btn-sm">
         <i class="fas fa-chevron-left"></i> Voltar
       </a>
-      <button type="submit" class="btn btn-primary btn-sm btn-nav">
+      <button type="submit" class="btn btn-primary btn-sm">
         Avançar <i class="fas fa-chevron-right"></i>
       </button>
     </div>

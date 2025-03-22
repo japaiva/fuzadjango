@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
-
-
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container-fluid">
@@ -21,33 +19,79 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                {% if user.is_authenticated %}
-                    <span class="navbar-text me-3 text-white">
-                        <i class="fas fa-user"></i> Olá, {{ user.username }}
-                    </span>
-                    <a class="btn btn-outline-light" href="{% url 'simulador:logout' %}">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
-                {% else %}
-                    <a class="btn btn-warning fw-semibold d-flex align-items-center gap-2" href="{% url 'login' %}">
-                        <i class="fas fa-sign-in-alt"></i> Login
-                    </a>
-                {% endif %}
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Links de navegação principal -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'simulador:cliente' %}">
+                            <i class="fas fa-calculator fa-sm me-1"></i> Nova Simulação
+                        </a>
+                    </li>
+                    
+                    <!-- Menu Administrativo (visível apenas para admin e engenharia) -->
+                    {% if user.nivel == 'admin' or user.nivel == 'engenharia' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-cog fa-sm me-1"></i> Administração
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="adminDropdown">
+                            {% if user.nivel == 'admin' %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'simulador:usuario_list' %}">
+                                    <i class="fas fa-users fa-sm me-2"></i> Usuários
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            <li>
+                                <a class="dropdown-item" href="{% url 'simulador:custo_list' %}">
+                                    <i class="fas fa-dollar-sign fa-sm me-2"></i> Custos
+                                </a>
+                            </li>
+                            
+                            {% if user.nivel == 'admin' %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'simulador:parametro_list' %}">
+                                    <i class="fas fa-sliders-h fa-sm me-2"></i> Parâmetros
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                
+                <!-- Área de login/logout -->
+                <div class="d-flex">
+                    {% if user.is_authenticated %}
+                        <span class="navbar-text me-3 text-white">
+                            <i class="fas fa-user"></i> Olá, {{ user.username }}
+                        </span>
+                        <a class="btn btn-outline-light" href="{% url 'simulador:logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    {% else %}
+                        <a class="btn btn-warning fw-semibold d-flex align-items-center gap-2" href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>
-
-
 
     <main class="container d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 56px);">
         {% if messages %}
             <div class="messages position-fixed top-0 start-50 translate-middle-x mt-5">
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+                    {% if forloop.first or message.message != messages.0.message %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         {% endif %}
@@ -61,7 +105,6 @@
         {% endif %}
     </main>
 
-
     <footer class="footer mt-auto py-3">
         <div class="container text-center">
             <span class="text-white">&copy; 2025 Elevadores Fuza. Todos os direitos reservados.</span>
@@ -69,6 +112,27 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Seleciona todos os alertas de mensagem
+            const alerts = document.querySelectorAll('.alert');
+            const seenMessages = new Set();
+            
+            // Verifica cada alerta
+            alerts.forEach(function(alert) {
+                // Obtém o texto da mensagem (remove espaços extras e o botão de fechar)
+                const messageText = alert.textContent.replace(/\s+/g, ' ').trim();
+                
+                // Se já vimos esta mensagem, remova o elemento
+                if (seenMessages.has(messageText)) {
+                    alert.remove();
+                } else {
+                    // Caso contrário, adicione à nossa coleção
+                    seenMessages.add(messageText);
+                }
+            });
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

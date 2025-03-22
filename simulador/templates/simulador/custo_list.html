@@ -1,22 +1,20 @@
-<!-- templates/custo_list.html -->
 {% extends 'simulador/base.html' %}
-
-{% block title %}Lista de Custos - Elevadores Fuza{% endblock %}
+{% block title %}Custos | {{ block.super }}{% endblock %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h2 class="mb-4">Lista de Custos</h2>
-        <a href="{% url 'custo_create' %}" class="btn btn-primary mb-3">
-            <i class="fas fa-plus"></i> Adicionar Custo
-        </a>
-        <table class="table table-striped">
-            <thead>
+<div class="container bg-light text-dark p-3 rounded shadow" style="max-width: 900px;">
+    <div class="border-bottom pb-2 mb-3">
+        <h5 class="mb-0">Lista de Custos</h5>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover align-middle compact-table">
+            <thead class="table-light">
                 <tr>
                     <th>Código</th>
                     <th>Descrição</th>
-                    <th>Unidade</th>
                     <th>Valor</th>
-                    <th>Ações</th>
+                    <th class="text-end" style="width: 100px">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,73 +22,135 @@
                     <tr>
                         <td>{{ custo.codigo }}</td>
                         <td>{{ custo.descricao }}</td>
-                        <td>{{ custo.unidade }}</td>
-                        <td>{{ custo.valor }}</td>
-                        <td>
-                            <a href="{% url 'custo_update' custo.codigo %}" class="btn btn-sm btn-info">
-                                <i class="fas fa-edit"></i> Editar
+                        <td>R$ {{ custo.valor|floatformat:2 }}</td>
+                        <td class="text-end action-buttons">
+                            <a href="{% url 'simulador:custo_update' custo.codigo %}" class="btn btn-outline-primary action-btn" title="Editar">
+                                <i class="fas fa-edit fa-sm"></i>
                             </a>
-                            <a href="{% url 'custo_delete' custo.codigo %}" class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash-alt"></i> Excluir
+                            <a href="{% url 'simulador:custo_delete' custo.codigo %}" class="btn btn-outline-danger action-btn" title="Excluir">
+                                <i class="fas fa-trash-alt fa-sm"></i>
                             </a>
                         </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-2 text-muted">Nenhum custo encontrado</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-{% endblock %}
-
-<!-- templates/custo_form.html -->
-{% extends 'base.html' %}
-
-{% block title %}{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Custo - Elevadores Fuza{% endblock %}
-
-{% block content %}
-    <div class="container mt-5">
-        <h2 class="mb-4">{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Custo</h2>
-        <form method="post">
-            {% csrf_token %}
-            {% for field in form %}
-                <div class="mb-3">
-                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <div class="text-danger">
-                            {% for error in field.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
+    
+    <!-- Paginação -->
+    {% if custos.paginator.num_pages > 1 %}
+    <div class="mt-3">
+        <nav aria-label="Navegação de página">
+            <ul class="pagination pagination-sm justify-content-center">
+                {% if custos.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="Primeiro">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ custos.previous_page_number }}" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo;&laquo;</span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo;</span>
+                    </li>
+                {% endif %}
+                
+                {% for i in custos.paginator.page_range %}
+                    {% if custos.number == i %}
+                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                    {% elif i > custos.number|add:'-3' and i < custos.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                     {% endif %}
-                </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Salvar
-            </button>
-            <a href="{% url 'custo_list' %}" class="btn btn-secondary">
-                <i class="fas fa-times"></i> Cancelar
-            </a>
-        </form>
+                {% endfor %}
+                
+                {% if custos.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ custos.next_page_number }}" aria-label="Próximo">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ custos.paginator.num_pages }}" aria-label="Último">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&raquo;</span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">&raquo;&raquo;</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
-{% endblock %}
-
-<!-- templates/custo_confirm_delete.html -->
-{% extends 'base.html' %}
-
-{% block title %}Excluir Custo - Elevadores Fuza{% endblock %}
-
-{% block content %}
-    <div class="container mt-5">
-        <h2 class="mb-4">Excluir Custo</h2>
-        <p>Tem certeza que deseja excluir o custo "{{ custo.descricao }}" ({{ custo.codigo }})?</p>
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">
-                <i class="fas fa-trash-alt"></i> Confirmar Exclusão
-            </button>
-            <a href="{% url 'custo_list' %}" class="btn btn-secondary">
-                <i class="fas fa-times"></i> Cancelar
-            </a>
-        </form>
+    {% endif %}
+    
+    <div class="d-flex justify-content-between mt-3">
+        <a href="{% url 'simulador:home' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-chevron-left"></i> Voltar
+        </a>
+        <a href="{% url 'simulador:custo_create' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Novo Custo
+        </a>
     </div>
+</div>
+
+<style>
+/* Estilos para a tabela compacta */
+.compact-table {
+    font-size: 0.875rem;
+}
+
+.compact-table th,
+.compact-table td {
+    padding: 0.25rem 0.5rem;
+    vertical-align: middle;
+}
+
+.compact-table thead th {
+    font-weight: 500;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+}
+
+/* Botões de ação */
+.action-buttons {
+    white-space: nowrap;
+}
+
+.action-btn {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.75rem;
+    line-height: 1;
+    border-radius: 0.2rem;
+    margin-left: 0.1rem;
+}
+
+.action-btn i {
+    font-size: 0.75rem;
+}
+
+/* Estilos para a paginação */
+.pagination {
+    margin-bottom: 0;
+}
+
+.page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+</style>
 {% endblock %}

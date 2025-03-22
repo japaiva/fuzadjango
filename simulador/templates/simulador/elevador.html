@@ -1,14 +1,17 @@
 {% extends 'simulador/base.html' %}
 {% block title %}Elevador - Simulador{% endblock %}
 {% block content %}
-<div class="container bg-light text-dark p-4 rounded shadow mt-4" style="max-width: 1000px;">
-  <h3 class="mb-4 text-center">Detalhes do Elevador</h3>
+<div class="container bg-light text-dark p-3 rounded shadow" style="max-width: 900px;">
+  <div class="border-bottom pb-2 mb-3">
+    <h5 class="mb-0">Detalhes do Elevador</h5>
+  </div>
+  
   <form method="post" id="elevadorForm">
     {% csrf_token %}
-    <div class="row">
+    <div class="row g-2">
       <div class="col-md-4">
-        <div class="mb-3">
-          <label for="modelo" class="form-label small">Modelo do Elevador</label>
+        <div class="mb-2">
+          <label for="modelo" class="form-label small mb-1">Modelo do Elevador</label>
           <select id="modelo" name="modelo" class="form-select form-select-sm" required>
             <option value="Passageiro">Passageiro</option>
             <option value="Carga">Carga</option>
@@ -16,33 +19,33 @@
             <option value="Plataforma Acessibilidade">Plataforma Acessibilidade</option>
           </select>
         </div>
-        <div id="capacidadePassageiro" class="mb-3" style="display: none;">
-          <label for="capacidade_passageiro" class="form-label small">Capacidade (Número de Pessoas)</label>
+        <div id="capacidadePassageiro" class="mb-2" style="display: none;">
+          <label for="capacidade_passageiro" class="form-label small mb-1">Capacidade (Número de Pessoas)</label>
           <input type="number" class="form-control form-control-sm" id="capacidade_passageiro" name="capacidade_passageiro" min="1" max="50" value="1">
         </div>
-        <div class="mb-3">
-          <label for="capacidade" class="form-label small">Capacidade (kg)</label>
+        <div class="mb-2">
+          <label for="capacidade" class="form-label small mb-1">Capacidade (kg)</label>
           <input type="number" class="form-control form-control-sm" id="capacidade" name="capacidade" min="80" max="10000" step="10" value="80">
         </div>
       </div>
       <div class="col-md-4">
-        <div class="mb-3">
-          <label for="acionamento" class="form-label small">Acionamento</label>
+        <div class="mb-2">
+          <label for="acionamento" class="form-label small mb-1">Acionamento</label>
           <select id="acionamento" name="acionamento" class="form-select form-select-sm">
             <option value="Motor">Motor</option>
             <option value="Hidraulico">Hidráulico</option>
             <option value="Carretel">Carretel</option>
           </select>
         </div>
-        <div id="tracaoDiv" class="mb-3">
-          <label for="tracao" class="form-label small">Tração</label>
+        <div id="tracaoDiv" class="mb-2">
+          <label for="tracao" class="form-label small mb-1">Tração</label>
           <select id="tracao" name="tracao" class="form-select form-select-sm">
             <option value="1x1">1x1</option>
             <option value="2x1">2x1</option>
           </select>
         </div>
-        <div id="contrapesoDiv" class="mb-3">
-          <label for="contrapeso" class="form-label small">Contrapeso</label>
+        <div id="contrapesoDiv" class="mb-2">
+          <label for="contrapeso" class="form-label small mb-1">Contrapeso</label>
           <select id="contrapeso" name="contrapeso" class="form-select form-select-sm">
             <option value="Traseiro">Traseiro</option>
             <option value="Lateral">Lateral</option>
@@ -50,29 +53,30 @@
         </div>
       </div>
       <div class="col-md-4">
-        <div class="mb-3">
-          <label for="largura_poco" class="form-label small">Largura do Poço (m)</label>
+        <div class="mb-2">
+          <label for="largura_poco" class="form-label small mb-1">Largura do Poço (m)</label>
           <input type="number" class="form-control form-control-sm" id="largura_poco" name="largura_poco" min="0" max="10" step="0.01" value="2.00">
         </div>
-        <div class="mb-3">
-          <label for="comprimento_poco" class="form-label small">Comprimento do Poço (m)</label>
+        <div class="mb-2">
+          <label for="comprimento_poco" class="form-label small mb-1">Comprimento do Poço (m)</label>
           <input type="number" class="form-control form-control-sm" id="comprimento_poco" name="comprimento_poco" min="0" max="10" step="0.01" value="2.00">
         </div>
-        <div class="mb-3">
-          <label for="altura_poco" class="form-label small">Altura do Poço (m)</label>
+        <div class="mb-2">
+          <label for="altura_poco" class="form-label small mb-1">Altura do Poço (m)</label>
           <input type="number" class="form-control form-control-sm" id="altura_poco" name="altura_poco" min="0" max="100" step="0.01" value="3.00">
         </div>
-        <div class="mb-3">
-          <label for="pavimentos" class="form-label small">Pavimentos</label>
+        <div class="mb-2">
+          <label for="pavimentos" class="form-label small mb-1">Pavimentos</label>
           <input type="number" class="form-control form-control-sm" id="pavimentos" name="pavimentos" min="2" max="100" step="1" value="2">
         </div>
       </div>
     </div>
-    <div class="d-flex justify-content-between align-items-center mt-4">
-      <a href="{% url 'simulador:cliente' %}" class="btn btn-outline-secondary btn-sm btn-nav">
+    
+    <div class="d-flex justify-content-between mt-3">
+      <a href="{% url 'simulador:cliente' %}" class="btn btn-outline-secondary btn-sm">
         <i class="fas fa-chevron-left"></i> Voltar
       </a>
-      <button type="submit" class="btn btn-primary btn-sm btn-nav">
+      <button type="submit" class="btn btn-primary btn-sm">
         Avançar <i class="fas fa-chevron-right"></i>
       </button>
     </div>
