@@ -1,6 +1,9 @@
-from utils.database import get_all_custos
 import math
 import bcrypt
+
+def get_all_custos():
+    """Função temporária para evitar importação circular"""
+    return []
 
 def hash_password(password):
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()

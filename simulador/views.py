@@ -53,7 +53,7 @@ def portas(request):
 
     return render(request, 'simulador/portas.html')
 
-def cabine_corpo(request):
+def cabine(request):
     if "respostas" not in request.session:
         request.session["respostas"] = {}
 

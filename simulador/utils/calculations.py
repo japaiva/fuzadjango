@@ -1,6 +1,9 @@
 import math
-from simulador.utils.database import get_all_custos
 from simulador.utils.utils import formatar_demanda_placas
+
+def get_all_custos():
+    """Função temporária que substitui a importação do SQLAlchemy"""
+    return [] 
 
 # dimensoes
 # componentes

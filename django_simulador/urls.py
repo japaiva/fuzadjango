@@ -14,7 +14,6 @@ urlpatterns = [
     path('', RedirectView.as_view(url='/simulador/', permanent=False)),
 ]
 
-
 # Para servir arquivos estáticos no modo dev
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
