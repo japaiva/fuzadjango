@@ -3,26 +3,24 @@
 
 {% block content %}
 <div class="container bg-light text-dark p-3 rounded shadow" style="max-width: 900px;">
-    <div class="border-bottom pb-2 mb-3">
-        <h5 class="mb-0">Lista de Parâmetros</h5>
+    <div class="border-bottom pb-2 mb-2">
+        <h5 class="mb-0">Parâmetros</h5>
     </div>
     
     <div class="table-responsive">
-        <table class="table table-hover align-middle compact-table">
+        <table class="table table-hover align-middle compact-table mb-2">
             <thead class="table-light">
                 <tr>
-                    <th>Nome</th>
+                    <th>Parâmetro</th>
                     <th>Valor</th>
-                    <th>Descrição</th>
                     <th class="text-end" style="width: 100px">Ações</th>
                 </tr>
             </thead>
             <tbody>
                 {% for parametro in parametros %}
                     <tr>
-                        <td>{{ parametro.nome }}</td>
+                        <td>{{ parametro.parametro }}</td>
                         <td>{{ parametro.valor }}</td>
-                        <td>{{ parametro.descricao }}</td>
                         <td class="text-end action-buttons">
                             <a href="{% url 'simulador:parametro_update' parametro.id %}" class="btn btn-outline-primary action-btn" title="Editar">
                                 <i class="fas fa-edit fa-sm"></i>
@@ -34,18 +32,22 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="4" class="text-center py-2 text-muted">Nenhum parâmetro encontrado</td>
+                        <td colspan="3" class="text-center py-2 text-muted">Nenhum parâmetro encontrado</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
     
-    <!-- Paginação -->
-    {% if parametros.paginator.num_pages > 1 %}
-    <div class="mt-3">
+    <!-- Navegação em linha única com espaçamento reduzido -->
+    <div class="d-flex justify-content-between align-items-center mt-2">
+        <a href="{% url 'simulador:home' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-chevron-left"></i> Voltar
+        </a>
+        
+        {% if parametros.paginator.num_pages > 1 %}
         <nav aria-label="Navegação de página">
-            <ul class="pagination pagination-sm justify-content-center">
+            <ul class="pagination pagination-sm mb-0">
                 {% if parametros.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=1" aria-label="Primeiro">
@@ -90,4 +92,64 @@
                         <span class="page-link">&raquo;</span>
                     </li>
                     <li class="page-item disabled">
-                        <span class="page-link">&raquo;&r
+                        <span class="page-link">&raquo;&raquo;</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% else %}
+        <div></div> <!-- Espaçador para manter o layout quando não há paginação -->
+        {% endif %}
+        
+        <a href="{% url 'simulador:parametro_create' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Novo Parâmetro
+        </a>
+    </div>
+</div>
+
+<style>
+/* Estilos para a tabela compacta */
+.compact-table {
+    font-size: 0.875rem;
+}
+
+.compact-table th,
+.compact-table td {
+    padding: 0.25rem 0.5rem;
+    vertical-align: middle;
+}
+
+.compact-table thead th {
+    font-weight: 500;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+}
+
+/* Botões de ação */
+.action-buttons {
+    white-space: nowrap;
+}
+
+.action-btn {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.75rem;
+    line-height: 1;
+    border-radius: 0.2rem;
+    margin-left: 0.1rem;
+}
+
+.action-btn i {
+    font-size: 0.75rem;
+}
+
+/* Estilos para a paginação */
+.pagination {
+    margin-bottom: 0;
+}
+
+.page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+</style>
+{% endblock %}

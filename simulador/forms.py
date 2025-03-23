@@ -60,8 +60,18 @@ class CustoForm(forms.ModelForm):
     class Meta:
         model = Custo
         fields = ['codigo', 'descricao', 'unidade', 'valor']
+        widgets = {
+            'codigo': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'unidade': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'valor': forms.NumberInput(attrs={'class': 'form-control form-control-sm', 'step': '0.01'}),
+        }
 
 class ParametroForm(forms.ModelForm):
     class Meta:
         model = Parametro
         fields = ['parametro', 'valor']
+        widgets = {
+            'parametro': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+            'valor': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+        }

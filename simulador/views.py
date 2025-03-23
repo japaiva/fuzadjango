@@ -277,16 +277,29 @@ def custo_create(request):
 def custo_update(request, pk):
     custo = get_object_or_404(Custo, pk=pk)
     if request.method == 'POST':
-        form = CustoForm(request.POST, instance=custo)
+        # Criamos um dicionário com os dados do POST para usar no formulário
+        post_data = {
+            'codigo': request.POST.get('codigo'),
+            'descricao': request.POST.get('descricao'),
+            'unidade': request.POST.get('unidade'),
+            'valor': request.POST.get('valor')
+        }
+        
+        # Usamos o dicionário para criar o formulário
+        form = CustoForm(post_data, instance=custo)
+        
         if form.is_valid():
             form.save()
             messages.success(request, 'Custo atualizado com sucesso.')
-            # Limpa todas as mensagens após adicionar para evitar duplicação
-            storage = messages.get_messages(request)
-            storage.used = True
             return redirect('simulador:custo_list')
+        else:
+            # Se o formulário não for válido, continuamos na página com os erros
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Erro no campo {field}: {error}")
     else:
         form = CustoForm(instance=custo)
+    
     return render(request, 'simulador/custo_form.html', {'form': form})
 
 @login_required
@@ -302,11 +315,12 @@ def custo_delete(request, pk):
         return redirect('simulador:custo_list')
     return render(request, 'simulador/custo_confirm_delete.html', {'custo': custo})
 
-# Views para Parâmetros
+# Views para Parâmetros (versão modificada)
 @login_required
 @user_passes_test(is_admin)
 def parametro_list(request):
-    parametros_list = Parametro.objects.all().order_by('nome')
+    # Buscar todos os parâmetros, ordenados por nome do parâmetro
+    parametros_list = Parametro.objects.all().order_by('parametro')
     
     # Configurar paginação (10 itens por página)
     paginator = Paginator(parametros_list, 10)
@@ -325,22 +339,16 @@ def parametro_list(request):
 
 @login_required
 @user_passes_test(is_admin)
-def parametro_detail(request, pk):
-    parametro = get_object_or_404(Parametro, pk=pk)
-    return render(request, 'simulador/parametro_detail.html', {'parametro': parametro})
-
-@login_required
-@user_passes_test(is_admin)
 def parametro_create(request):
     if request.method == 'POST':
         form = ParametroForm(request.POST)
         if form.is_valid():
             parametro = form.save()
             messages.success(request, 'Parâmetro criado com sucesso.')
-            # Limpa todas as mensagens após adicionar para evitar duplicação
+            # Redireciona diretamente para a lista, não para o detalhe
             storage = messages.get_messages(request)
             storage.used = True
-            return redirect('simulador:parametro_detail', pk=parametro.pk)
+            return redirect('simulador:parametro_list')
     else:
         form = ParametroForm()
     return render(request, 'simulador/parametro_form.html', {'form': form})
@@ -354,10 +362,10 @@ def parametro_update(request, pk):
         if form.is_valid():
             parametro = form.save()
             messages.success(request, 'Parâmetro atualizado com sucesso.')
-            # Limpa todas as mensagens após adicionar para evitar duplicação
+            # Redireciona diretamente para a lista, não para o detalhe
             storage = messages.get_messages(request)
             storage.used = True
-            return redirect('simulador:parametro_detail', pk=parametro.pk)
+            return redirect('simulador:parametro_list')
     else:
         form = ParametroForm(instance=parametro)
     return render(request, 'simulador/parametro_form.html', {'form': form})

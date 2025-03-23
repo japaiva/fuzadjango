@@ -8,12 +8,7 @@ body {
     flex-direction: column;
 }
 
-/* Navbar */
-.navbar {
-    background-color: rgba(0, 0, 0, 0.7) !important;
-}
-
-/* Content Box */
+/* Layout containers */
 .content-box {
     background-color: rgba(0, 0, 0, 0.7);
     padding: 2rem;
@@ -24,6 +19,24 @@ body {
     width: 100%;
 }
 
+.content-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.login-box {
+    max-width: 300px;
+    width: 100%;
+}
+
+.form-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Tipografia */
 .content-box h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
@@ -33,6 +46,73 @@ body {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
     color: #ffc107;
+}
+
+.form-container h2 {
+    color: #333;
+}
+
+/* Navegação */
+.navbar {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.navbar .btn {
+    height: 36px !important;
+    min-height: 36px !important;
+    line-height: 24px !important;
+    font-size: 0.875rem;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-top: 0;
+}
+
+.navbar .btn i {
+    margin-right: 5px;
+}
+
+.navbar-nav .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 0.25rem;
+}
+
+/* Menu Dropdown */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    margin-top: 0.5rem;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 0.5rem;
+}
+
+.nav-link.dropdown-toggle::after {
+    transition: transform 0.2s ease;
+}
+
+.nav-link.dropdown-toggle[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+}
+
+/* Footer */
+.footer {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    padding: 1rem 0;
+    margin-top: auto;
 }
 
 /* Formulários */
@@ -55,20 +135,21 @@ body {
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
+.form-control:focus, .form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
 .form-control-sm, .form-select-sm {
     font-size: 0.875rem;
     height: calc(1.5em + 0.5rem + 2px);
     padding: 0.25rem 0.5rem;
 }
 
-.form-control:focus, .form-select:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
 /* Botões */
 .btn {
     margin-top: 1rem;
+    transition: all 0.3s ease;
 }
 
 .btn-primary {
@@ -79,6 +160,17 @@ body {
 .btn-primary:hover {
     background-color: #0056b3;
     border-color: #004085;
+}
+
+.btn-warning {
+    color: #212529;
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-outline-light {
+    color: #f8f9fa;
+    border-color: #f8f9fa;
 }
 
 .btn-outline-secondary {
@@ -102,92 +194,23 @@ body {
     font-size: 0.875rem;
     line-height: 1.5;
     border-radius: 0.2rem;
+}
+
+.btn-nav:hover, .area-administrativa .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn-nav i, .area-administrativa .btn i {
+    margin: 0 5px;
     transition: all 0.3s ease;
 }
 
-.btn-nav:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+.area-administrativa .btn:hover i {
+    transform: scale(1.2);
 }
 
-.btn-nav i {
-    margin: 0 5px;
-}
-
-/* Footer */
-.footer {
-    background-color: rgba(0, 0, 0, 0.7);
-    color: #ffffff;
-    padding: 1rem 0;
-    margin-top: auto;
-}
-
-/* Login Box */
-.login-box {
-    max-width: 300px;
-    width: 100%;
-}
-
-/* Content Wrapper */
-.content-wrapper {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Progress Bar */
-.progress {
-    height: 10px;
-    background-color: #e9ecef;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    background-color: #007bff;
-}
-
-/* Form Container */
-.form-container {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.form-container h2 {
-    color: #333;
-}
-
-<!-- Adicione o seguinte bloco de código dentro da tag <style> no seu arquivo base.html -->
-
-/* Estilos para os botões de autenticação */
-.navbar .btn {
-    height: 36px !important; /* Altura fixa e forçada com !important */
-    min-height: 36px !important;
-    line-height: 24px !important;
-    font-size: 0.875rem;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.navbar .btn-warning {
-    color: #212529;
-    background-color: #ffc107;
-    border-color: #ffc107;
-}
-
-.navbar .btn-outline-light {
-    color: #f8f9fa;
-    border-color: #f8f9fa;
-}
-
-/* Garante que o ícone fique alinhado com o texto */
-.navbar .btn i {
-    margin-right: 5px;
-}
-
-/* Estilos para botões do menu administrativo */
+/* Área Administrativa */
 .area-administrativa {
     transition: all 0.3s ease;
     margin-top: 2rem;
@@ -199,53 +222,141 @@ body {
     min-width: 120px;
 }
 
-.area-administrativa .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+/* Componentes */
+.progress {
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
-/* Animação para ícones */
-.area-administrativa .btn i {
+.progress-bar {
+    background-color: #007bff;
+}
+
+/* Ajustes para a barra de navegação e botões de autenticação */
+.navbar-auth {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.auth-btn {
+    padding: 0.4rem 1rem;
+    height: auto !important;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Melhorias para a página inicial */
+.home-content {
+    max-width: 550px;
+    padding: 2.5rem;
+    text-align: center;
+}
+
+.logo-area {
+    padding-bottom: 1.5rem;
+}
+
+.logo-area .fa-elevator {
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+    transition: transform 0.5s ease, filter 0.5s ease;
+}
+
+.logo-area:hover .fa-elevator {
+    transform: translateY(-5px);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+}
+
+.home-content h1 {
+    font-size: 2.75rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.home-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.home-content .lead {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+}
+
+.action-button {
+    padding: 0.75rem 2rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
 }
 
-.area-administrativa .btn:hover i {
-    transform: scale(1.2);
+.action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* Estilo para o menu dropdown */
-.dropdown-menu {
-    border: none;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    margin-top: 0.5rem;
+.action-button.pulse {
+    animation: pulse 2s infinite;
 }
 
-.dropdown-item {
-    padding: 0.5rem 1rem;
-    transition: all 0.2s ease;
+.home-footer {
+    opacity: 0.7;
 }
 
-.dropdown-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
 }
 
-.dropdown-item i {
-    width: 20px;
-    text-align: center;
-    margin-right: 0.5rem;
+/* Estilo para as mensagens auto-dismiss */
+.auto-dismiss-alert {
+    animation: fadeInDown 0.5s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 0.5rem;
 }
 
-/* Animação para o ícone de dropdown */
-.nav-link.dropdown-toggle::after {
-    transition: transform 0.2s ease;
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.nav-link.dropdown-toggle[aria-expanded="true"]::after {
-    transform: rotate(180deg);
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
 }
 
-/* Estilo para o item ativo no menu */
-.navbar-nav .nav-link.active {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 0.25rem;
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
 }

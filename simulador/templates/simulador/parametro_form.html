@@ -20,13 +20,15 @@
         {% endif %}
         
         <div class="row g-3">
-            <!-- Nome -->
-            <div class="col-md-6">
-                <label for="{{ form.nome.id_for_label }}" class="form-label small mb-1">{{ form.nome.label }}</label>
-                {{ form.nome }}
-                {% if form.nome.errors %}
+            <!-- Parâmetro -->
+            <div class="col-12 mb-3">
+                <label for="{{ form.parametro.id_for_label }}" class="form-label small mb-1">{{ form.parametro.label }}</label>
+                <input type="text" name="parametro" id="{{ form.parametro.id_for_label }}" 
+                       class="form-control form-control-sm"
+                       value="{{ form.parametro.value|default_if_none:'' }}">
+                {% if form.parametro.errors %}
                     <div class="text-danger small">
-                        {% for error in form.nome.errors %}
+                        {% for error in form.parametro.errors %}
                             {{ error }}
                         {% endfor %}
                     </div>
@@ -34,25 +36,14 @@
             </div>
             
             <!-- Valor -->
-            <div class="col-md-6">
+            <div class="col-12">
                 <label for="{{ form.valor.id_for_label }}" class="form-label small mb-1">{{ form.valor.label }}</label>
-                {{ form.valor }}
+                <input type="text" name="valor" id="{{ form.valor.id_for_label }}" 
+                       class="form-control form-control-sm"
+                       value="{{ form.valor.value|default_if_none:'' }}">
                 {% if form.valor.errors %}
                     <div class="text-danger small">
                         {% for error in form.valor.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <!-- Descrição -->
-            <div class="col-md-12">
-                <label for="{{ form.descricao.id_for_label }}" class="form-label small mb-1">{{ form.descricao.label }}</label>
-                {{ form.descricao }}
-                {% if form.descricao.errors %}
-                    <div class="text-danger small">
-                        {% for error in form.descricao.errors %}
                             {{ error }}
                         {% endfor %}
                     </div>
@@ -70,4 +61,16 @@
         </div>
     </form>
 </div>
+
+<style>
+/* Ajustes para o formulário */
+.form-control, .form-select {
+    font-size: 0.875rem;
+}
+
+.form-control-sm, .form-select-sm {
+    padding: 0.25rem 0.5rem;
+    height: calc(1.5em + 0.5rem + 2px);
+}
+</style>
 {% endblock %}

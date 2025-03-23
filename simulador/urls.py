@@ -25,9 +25,9 @@ urlpatterns = [
     path('custos/<str:pk>/update/', views.custo_update, name='custo_update'),
     path('custos/<str:pk>/delete/', views.custo_delete, name='custo_delete'),
     
-    # URLs para Parâmetros
     path('parametros/', views.parametro_list, name='parametro_list'),
     path('parametros/create/', views.parametro_create, name='parametro_create'),
     path('parametros/<int:pk>/update/', views.parametro_update, name='parametro_update'),
     path('parametros/<int:pk>/delete/', views.parametro_delete, name='parametro_delete'),
+
 ]

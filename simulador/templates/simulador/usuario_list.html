@@ -3,12 +3,12 @@
 
 {% block content %}
 <div class="container bg-light text-dark p-3 rounded shadow" style="max-width: 900px;">
-    <div class="border-bottom pb-2 mb-3">
-        <h5 class="mb-0">Lista de Usuários</h5>
+    <div class="border-bottom pb-2 mb-2">
+        <h5 class="mb-0">Usuários</h5>
     </div>
     
     <div class="table-responsive">
-        <table class="table table-hover align-middle compact-table">
+        <table class="table table-hover align-middle compact-table mb-2">
             <thead class="table-light">
                 <tr>
                     <th>Username</th>
@@ -45,8 +45,8 @@
         </table>
     </div>
     
-    <!-- Navegação em linha única: Voltar, paginação e Adicionar -->
-    <div class="d-flex justify-content-between align-items-center mt-3">
+    <!-- Navegação em linha única com espaçamento reduzido -->
+    <div class="d-flex justify-content-between align-items-center mt-2">
         <a href="{% url 'simulador:home' %}" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-chevron-left"></i> Voltar
         </a>
