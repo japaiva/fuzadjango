@@ -63,7 +63,7 @@
                     {% endif %}
                 </ul>
                 
-                <!-- Área de login/logout -->
+                <!-- Área de login/logout - MANTIDA INTACTA -->
                 <div class="d-flex align-items-center navbar-auth">
                     {% if user.is_authenticated %}
                         <span class="navbar-text me-3 text-white d-flex align-items-center">
@@ -96,13 +96,8 @@
             </div>
         {% endif %}
 
-        {% if use_content_box %}
-            <div class="content-box">
-            {% endif %}
-                {% block content %}{% endblock %}
-            {% if use_content_box %}
-            </div>
-        {% endif %}
+        <!-- SOLUÇÃO: Removida a lógica de condicional use_content_box aqui -->
+        {% block content %}{% endblock %}
     </main>
 
     <footer class="footer mt-auto py-3">

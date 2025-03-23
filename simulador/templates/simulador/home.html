@@ -3,35 +3,24 @@
 
 {% block content %}
 <div class="content-box home-content">
-    <div class="logo-area mb-4">
-        <i class="fas fa-elevator fa-3x text-warning mb-3"></i>
+    <div class="logo-area mb-3">
+        <i class="fas fa-elevator fa-2x mb-2"></i>
         <h1>Elevadores Fuza</h1>
         <h2>Simulador de Orçamentos</h2>
     </div>
     
     {% if user.is_authenticated %}
-        <div class="action-area">
-            <a href="{% url 'simulador:cliente' %}" class="btn btn-primary btn-lg action-button">
+        <div class="action-area mt-3">
+            <a href="{% url 'simulador:cliente' %}" class="btn btn-primary action-button">
                 <i class="fas fa-calculator me-2"></i>Iniciar Simulação
             </a>
         </div>
     {% endif %}
-    
-
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Pequena animação para a tela inicial
-    document.addEventListener('DOMContentLoaded', function() {
-        const actionButton = document.querySelector('.action-button');
-        
-        if (actionButton) {
-            setTimeout(() => {
-                actionButton.classList.add('pulse');
-            }, 500);
-        }
-    });
+    // Removida a animação pulse para mais sobriedade
 </script>
 {% endblock %}
