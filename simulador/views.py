@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .utils.calculations import calcular_dimensionamento_completo, calcular_componentes
+from .utils.utils import agrupar_respostas_por_pagina  # Certifique-se de que este arquivo existe
 
 from .models import Usuario, Custo, Parametro
 from .forms import UsuarioForm, CustoForm, ParametroForm
@@ -32,39 +33,135 @@ def inicio(request):
 
 @login_required
 def cliente(request):
+    # Inicializa a sessão se não existir
+    if "respostas" not in request.session:
+        request.session["respostas"] = {}
+    
     if request.method == 'POST':
         nome_cliente = request.POST.get('nome_cliente')
         nome_empresa = request.POST.get('nome_empresa')
         
         if nome_cliente:
-            request.session['cliente'] = {
-                'nome': nome_cliente,
-                'empresa': nome_empresa or ''
-            }
+            # Salvar diretamente em respostas
+            request.session["respostas"]["Solicitante"] = nome_cliente
+            request.session["respostas"]["Empresa"] = nome_empresa or ''
+            
+            # Marcar a sessão como modificada
+            request.session.modified = True
+            
             return redirect('simulador:elevador')
         else:
             messages.error(request, 'Por favor, identifique o cliente.')
     
-    return render(request, 'simulador/cliente.html')
+    # Carregar os dados existentes para o formulário
+    respostas = request.session.get("respostas", {})
+    form = {
+        'nome_cliente': respostas.get('Solicitante', ''),
+        'nome_empresa': respostas.get('Empresa', '')
+    }
+    
+    return render(request, 'simulador/cliente.html', {'form': form})
 
 @login_required
 def elevador(request):
+    # Inicializa a sessão se não existir
+    if "respostas" not in request.session:
+        request.session["respostas"] = {}
+    
     if request.method == 'POST':
-        # Aqui você pode armazenar os dados no session
-        request.session['elevador_data'] = request.POST  # ou fazer um tratamento adequado
-        return redirect('simulador:portas')  # <- Certifique-se de que está indo para a próxima etapa
-    return render(request, 'simulador/elevador.html')
+        # Capturar dados do formulário
+        modelo = request.POST.get('modelo')
+        acionamento = request.POST.get('acionamento')
+        
+        # Capacidade: tratar diferente para passageiro vs outros
+        if modelo == "Passageiro":
+            capacidade = int(request.POST.get('capacidade_passageiro', 1))
+        else:
+            capacidade = float(request.POST.get('capacidade', 80.0))
+        
+        # Armazenar no formato unificado
+        request.session["respostas"]["Modelo do Elevador"] = modelo
+        request.session["respostas"]["Capacidade"] = capacidade
+        request.session["respostas"]["Acionamento"] = acionamento
+        
+        if acionamento in ["Motor", "Carretel"]:
+            request.session["respostas"]["Tração"] = request.POST.get('tracao')
+            
+        if acionamento == "Motor":
+            request.session["respostas"]["Contrapeso"] = request.POST.get('contrapeso')
+            
+        # Dimensões do poço
+        request.session["respostas"]["Largura do Poço"] = float(request.POST.get('largura_poco', 0))
+        request.session["respostas"]["Comprimento do Poço"] = float(request.POST.get('comprimento_poco', 0))
+        request.session["respostas"]["Altura do Poço"] = float(request.POST.get('altura_poco', 0))
+        request.session["respostas"]["Pavimentos"] = int(request.POST.get('pavimentos', 2))
+        
+        # Marcar a sessão como modificada
+        request.session.modified = True
+        
+        return redirect('simulador:portas')
+    
+    # Recuperar dados da sessão para pré-preenchimento
+    respostas = request.session.get("respostas", {})
+    
+    return render(request, 'simulador/elevador.html', {'respostas': respostas})
 
 @login_required
 def portas(request):
+    # Inicializa a sessão se não existir
+    if "respostas" not in request.session:
+        request.session["respostas"] = {}
+    
     if request.method == 'POST':
-        # Aqui você pode salvar os dados da sessão ou do banco se quiser
-        # request.session['portas_data'] = request.POST
+        # Porta da Cabine
+        request.session["respostas"]["Modelo Porta"] = request.POST.get('modelo_porta')
+        request.session["respostas"]["Material Porta"] = request.POST.get('material_porta')
+        
+        if request.POST.get('material_porta') == "Outro":
+            request.session["respostas"]["Material Porta Outro Nome"] = request.POST.get('outro_nome_porta')
+            request.session["respostas"]["Material Porta Outro Valor"] = request.POST.get('outro_valor_porta')
+        elif "Material Porta Outro Nome" in request.session["respostas"]:
+            del request.session["respostas"]["Material Porta Outro Nome"]
+            del request.session["respostas"]["Material Porta Outro Valor"]
+            
+        if request.POST.get('modelo_porta') == "Automática":
+            request.session["respostas"]["Folhas Porta"] = request.POST.get('folhas_porta')
+        elif "Folhas Porta" in request.session["respostas"]:
+            del request.session["respostas"]["Folhas Porta"]
+            
+        request.session["respostas"]["Largura Porta"] = float(request.POST.get('largura_porta', 0))
+        request.session["respostas"]["Altura Porta"] = float(request.POST.get('altura_porta', 0))
+        
+        # Porta do Pavimento
+        request.session["respostas"]["Modelo Porta Pavimento"] = request.POST.get('modelo_porta_pav')
+        request.session["respostas"]["Material Porta Pavimento"] = request.POST.get('material_porta_pav')
+        
+        if request.POST.get('material_porta_pav') == "Outro":
+            request.session["respostas"]["Material Porta Pavimento Outro Nome"] = request.POST.get('outro_nome_porta_pav')
+            request.session["respostas"]["Material Porta Pavimento Outro Valor"] = request.POST.get('outro_valor_porta_pav')
+        elif "Material Porta Pavimento Outro Nome" in request.session["respostas"]:
+            del request.session["respostas"]["Material Porta Pavimento Outro Nome"]
+            del request.session["respostas"]["Material Porta Pavimento Outro Valor"]
+            
+        if request.POST.get('modelo_porta_pav') == "Automática":
+            request.session["respostas"]["Folhas Porta Pavimento"] = request.POST.get('folhas_porta_pav')
+        elif "Folhas Porta Pavimento" in request.session["respostas"]:
+            del request.session["respostas"]["Folhas Porta Pavimento"]
+            
+        request.session["respostas"]["Largura Porta Pavimento"] = float(request.POST.get('largura_porta_pav', 0))
+        request.session["respostas"]["Altura Porta Pavimento"] = float(request.POST.get('altura_porta_pav', 0))
+        
+        # Marcar a sessão como modificada
+        request.session.modified = True
+        
+        return redirect('simulador:cabine')
+    
+    # Recuperar dados da sessão para pré-preenchimento
+    respostas = request.session.get("respostas", {})
+    
+    return render(request, 'simulador/portas.html', {'respostas': respostas})
 
-        return redirect('simulador:cabine')  # 🔁 redireciona para a view da cabine
-
-    return render(request, 'simulador/portas.html')
-
+@login_required
 def cabine(request):
     if "respostas" not in request.session:
         request.session["respostas"] = {}
@@ -72,18 +169,23 @@ def cabine(request):
     if request.method == 'POST':
         # Capturar dados do formulário
         material = request.POST.get('material')
-        espessura = request.POST.get('espessura')
         saida = request.POST.get('saida')
         piso = request.POST.get('piso')
-        altura_cabine = float(request.POST.get('altura_cabine'))
+        altura_cabine = float(request.POST.get('altura_cabine', 0))
 
         # Salvar dados na sessão
         request.session["respostas"]["Material"] = material
-        if material != "Outro":
-            request.session["respostas"]["Espessura"] = espessura
-        else:
+        
+        if material == "Outro":
             request.session["respostas"]["Material Outro Nome"] = request.POST.get('outro_nome')
             request.session["respostas"]["Material Outro Valor"] = request.POST.get('outro_valor')
+        elif "Material Outro Nome" in request.session["respostas"]:
+            del request.session["respostas"]["Material Outro Nome"]
+            del request.session["respostas"]["Material Outro Valor"]
+            
+        if material != "Outro":
+            request.session["respostas"]["Espessura"] = request.POST.get('espessura')
+
         request.session["respostas"]["Saída"] = saida
         request.session["respostas"]["Altura da Cabine"] = altura_cabine
         request.session["respostas"]["Piso"] = piso
@@ -93,6 +195,14 @@ def cabine(request):
             if request.POST.get('material_piso') == "Outro":
                 request.session["respostas"]["Material Piso Outro Nome"] = request.POST.get('outro_nome_piso')
                 request.session["respostas"]["Material Piso Outro Valor"] = request.POST.get('outro_valor_piso')
+        elif "Material Piso Cabine" in request.session["respostas"]:
+            del request.session["respostas"]["Material Piso Cabine"]
+            if "Material Piso Outro Nome" in request.session["respostas"]:
+                del request.session["respostas"]["Material Piso Outro Nome"]
+                del request.session["respostas"]["Material Piso Outro Valor"]
+
+        # Marcar a sessão como modificada
+        request.session.modified = True
 
         # Calcular dimensionamento
         dimensionamento, explicacoes = calcular_dimensionamento_completo(request.session["respostas"])
@@ -109,7 +219,7 @@ def cabine(request):
         request.session["custos"] = custos
         request.session["custo_total"] = custo_total
 
-        return redirect('simulador:proxima_pagina')
+        return redirect('simulador:resumo')
 
     # Se for GET, renderizar o formulário
     respostas = request.session.get("respostas", {})
@@ -121,6 +231,7 @@ def cabine(request):
     
     context = {
         'respostas': respostas,
+        'materiais': ["Inox 430", "Inox 304", "Chapa Pintada", "Alumínio", "Outro"],
         'contrapeso': contrapeso,
         'opcoes_saida': ["Padrão", "Oposta"] if contrapeso != "Traseiro" else ["Padrão"],
         'altura_inicial': 2.30 if modelo_elevador == "Passageiro" else 2.10,
@@ -132,22 +243,58 @@ def cabine(request):
 
 @login_required
 def resumo(request):
-    respostas = {
-        "cliente": request.session.get("cliente"),
-        "elevador": request.session.get("elevador_data"),
-        "portas": request.session.get("portas_data"),
-        "cabine": request.session.get("cabine"),
+    if "respostas" not in request.session:
+        return redirect('simulador:cliente')
+        
+    respostas = request.session.get("respostas", {})
+    
+    # Calcular dimensionamento
+    dimensionamento, explicacao = calcular_dimensionamento_completo(respostas)
+    
+    # Calcular componentes
+    componentes, custos, custo_total, todos_custos = calcular_componentes(dimensionamento, respostas)
+    
+    # Agrupar respostas por página para exibição
+    respostas_agrupadas = agrupar_respostas_por_pagina(respostas)
+    
+    # Preparar grupos de componentes
+    grupos = {}
+    for codigo, info in componentes.items():
+        grupo = info['grupo']
+        subgrupo = info['subgrupo']
+        if grupo not in grupos:
+            grupos[grupo] = {}
+        if subgrupo not in grupos[grupo]:
+            grupos[grupo][subgrupo] = []
+        grupos[grupo][subgrupo].append(info)
+    
+    context = {
+        'respostas': respostas,
+        'respostas_agrupadas': respostas_agrupadas,
+        'dimensionamento': dimensionamento,
+        'explicacao': explicacao,
+        'componentes': componentes,
+        'grupos': grupos,
+        'custo_total': custo_total,
+        'user_level': request.user.nivel if hasattr(request.user, 'nivel') else None,
     }
-    return render(request, 'simulador/resumo.html', {'respostas': respostas})
+    
+    return render(request, 'simulador/resumo.html', context)
 
 @login_required
 def reiniciar_simulacao(request):
     if request.method == 'POST':
-        # Evita apagar a sessão de login
-        keys_to_clear = ['cliente', 'elevador_data', 'portas_data', 'cabine']
-        for key in keys_to_clear:
-            if key in request.session:
-                del request.session[key]
+        # Mantém apenas os dados de login na sessão
+        keys_to_keep = ['_auth_user_id', '_auth_user_backend', '_auth_user_hash']
+        saved_keys = {key: request.session[key] for key in keys_to_keep if key in request.session}
+        
+        # Limpa a sessão
+        request.session.clear()
+        
+        # Restaura os dados de autenticação
+        for key, value in saved_keys.items():
+            request.session[key] = value
+            
         return redirect('simulador:cliente')
     
     return redirect('simulador:resumo')  # fallback para GET
@@ -382,3 +529,95 @@ def parametro_delete(request, pk):
         storage.used = True
         return redirect('simulador:parametro_list')
     return render(request, 'simulador/parametro_confirm_delete.html', {'parametro': parametro})
+
+@login_required
+def gerar_pdf(request):
+    """
+    View para gerar o PDF de demonstrativo de cálculo.
+    """
+    if "respostas" not in request.session:
+        return redirect('simulador:cliente')
+    
+    respostas = request.session.get("respostas", {})
+    
+    # Calcular dimensionamento
+    dimensionamento, explicacao = calcular_dimensionamento_completo(respostas)
+    
+    # Calcular componentes
+    componentes, custos, custo_total, todos_custos = calcular_componentes(dimensionamento, respostas)
+    
+    # Agrupar respostas por página para exibição
+    from .utils.helpers import agrupar_respostas_por_pagina
+    respostas_agrupadas = agrupar_respostas_por_pagina(respostas)
+    
+    # Preparar grupos de componentes
+    grupos = {}
+    for codigo, info in componentes.items():
+        grupo = info['grupo']
+        subgrupo = info['subgrupo']
+        if grupo not in grupos:
+            grupos[grupo] = {}
+        if subgrupo not in grupos[grupo]:
+            grupos[grupo][subgrupo] = []
+        grupos[grupo][subgrupo].append(info)
+    
+    # Gerar o PDF
+    from .utils.pdf_utils import gerar_pdf_demonstrativo
+    pdf_bytes = gerar_pdf_demonstrativo(
+        dimensionamento,
+        explicacao,
+        componentes,
+        custo_total,
+        respostas,
+        respostas_agrupadas,
+        grupos,
+        username=request.user.username
+    )
+    
+    # Enviar o PDF como resposta
+    from django.http import HttpResponse
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="relatorio_calculo.pdf"'
+    return response
+
+@login_required
+def proposta_comercial(request):
+    """
+    View para gerar o PDF de proposta comercial.
+    """
+    if "respostas" not in request.session:
+        return redirect('simulador:cliente')
+    
+    respostas = request.session.get("respostas", {})
+    
+    # Calcular dimensionamento
+    dimensionamento, explicacao = calcular_dimensionamento_completo(respostas)
+    
+    # Calcular componentes
+    componentes, custos, custo_total, todos_custos = calcular_componentes(dimensionamento, respostas)
+    
+    # Agrupar respostas por página para exibição
+    from .utils.helpers import agrupar_respostas_por_pagina
+    respostas_agrupadas = agrupar_respostas_por_pagina(respostas)
+    
+    # Pegar nome do cliente e empresa
+    nome_cliente = respostas.get("Solicitante", "Cliente")
+    empresa = respostas.get("Empresa", "")
+    
+    # Gerar o PDF
+    from .utils.pdf_utils import gerar_pdf_proposta_comercial
+    pdf_bytes = gerar_pdf_proposta_comercial(
+        dimensionamento,
+        componentes,
+        custo_total,
+        respostas_agrupadas,
+        nome_cliente,
+        empresa,
+        username=request.user.username
+    )
+    
+    # Enviar o PDF como resposta
+    from django.http import HttpResponse
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="proposta_comercial.pdf"'
+    return response

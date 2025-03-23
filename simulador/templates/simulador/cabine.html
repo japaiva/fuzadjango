@@ -13,29 +13,25 @@
         <div class="mb-2">
           <label for="material" class="form-label small mb-1">Material</label>
           <select id="material" name="material" class="form-select form-select-sm" required>
-            <option value="Inox 430">Inox 430</option>
-            <option value="Inox 304">Inox 304</option>
-            <option value="Chapa Pintada">Chapa Pintada</option>
-            <option value="Alumínio">Alumínio</option>
-            <option value="Outro">Outro</option>
+            {% for opcao in materiais %}
+              <option value="{{ opcao }}" {% if opcao == respostas.Material %}selected{% endif %}>{{ opcao }}</option>
+            {% endfor %}
           </select>
         </div>
         <div id="outro_material" style="display: none;">
           <div class="mb-2">
             <label for="outro_nome" class="form-label small mb-1">Nome do Material</label>
-            <input type="text" class="form-control form-control-sm" id="outro_nome" name="outro_nome">
+            <input type="text" class="form-control form-control-sm" id="outro_nome" name="outro_nome" value="{{ respostas.Material_Outro_Nome|default:'' }}">
           </div>
           <div class="mb-2">
             <label for="outro_valor" class="form-label small mb-1">Valor do Material</label>
-            <input type="number" class="form-control form-control-sm" id="outro_valor" name="outro_valor" min="0" step="0.1">
+            <input type="number" class="form-control form-control-sm" id="outro_valor" name="outro_valor" min="0" step="0.1" value="{{ respostas.Material_Outro_Valor|default:'' }}">
           </div>
         </div>
         <div class="mb-2" id="espessura_div">
           <label for="espessura" class="form-label small mb-1">Espessura (mm)</label>
           <select id="espessura" name="espessura" class="form-select form-select-sm">
-            <option value="1,2">1,2</option>
-            <option value="1,5">1,5</option>
-            <option value="2,0">2,0</option>
+            <!-- As opções serão preenchidas via JavaScript -->
           </select>
         </div>
       </div>
@@ -44,33 +40,34 @@
         <div class="mb-2">
           <label for="saida" class="form-label small mb-1">Saída</label>
           <select id="saida" name="saida" class="form-select form-select-sm" required>
-            <option value="Padrão">Padrão</option>
-            <option value="Oposta">Oposta</option>
+            {% for opcao in opcoes_saida %}
+              <option value="{{ opcao }}" {% if opcao == respostas.Saída %}selected{% endif %}>{{ opcao }}</option>
+            {% endfor %}
           </select>
         </div>
         <div class="mb-2">
           <label for="piso" class="form-label small mb-1">Piso</label>
           <select id="piso" name="piso" class="form-select form-select-sm" required>
-            <option value="Por conta do cliente">Por conta do cliente</option>
-            <option value="Por conta da empresa">Por conta da empresa</option>
+            <option value="Por conta do cliente" {% if respostas.Piso == "Por conta do cliente" %}selected{% endif %}>Por conta do cliente</option>
+            <option value="Por conta da empresa" {% if respostas.Piso == "Por conta da empresa" %}selected{% endif %}>Por conta da empresa</option>
           </select>
         </div>
         <div id="material_piso_div" style="display: none;">
           <div class="mb-2">
             <label for="material_piso" class="form-label small mb-1">Material do Piso da Cabine</label>
             <select id="material_piso" name="material_piso" class="form-select form-select-sm">
-              <option value="Antiderrapante">Antiderrapante</option>
-              <option value="Outro">Outro</option>
+              <option value="Antiderrapante" {% if respostas.Material_Piso_Cabine == "Antiderrapante" %}selected{% endif %}>Antiderrapante</option>
+              <option value="Outro" {% if respostas.Material_Piso_Cabine == "Outro" %}selected{% endif %}>Outro</option>
             </select>
           </div>
           <div id="outro_material_piso" style="display: none;">
             <div class="mb-2">
               <label for="outro_nome_piso" class="form-label small mb-1">Nome do Material do Piso</label>
-              <input type="text" class="form-control form-control-sm" id="outro_nome_piso" name="outro_nome_piso">
+              <input type="text" class="form-control form-control-sm" id="outro_nome_piso" name="outro_nome_piso" value="{{ respostas.Material_Piso_Outro_Nome|default:'' }}">
             </div>
             <div class="mb-2">
               <label for="outro_valor_piso" class="form-label small mb-1">Valor do Material do Piso</label>
-              <input type="number" class="form-control form-control-sm" id="outro_valor_piso" name="outro_valor_piso" min="0" step="0.1">
+              <input type="number" class="form-control form-control-sm" id="outro_valor_piso" name="outro_valor_piso" min="0" step="0.1" value="{{ respostas.Material_Piso_Outro_Valor|default:'' }}">
             </div>
           </div>
         </div>
@@ -79,15 +76,15 @@
       <div class="col-md-4">
         <div class="mb-2">
           <label for="largura_cabine" class="form-label small mb-1">Largura da Cabine (m)</label>
-          <input type="number" class="form-control form-control-sm" id="largura_cabine" name="largura_cabine" readonly>
+          <input type="number" class="form-control form-control-sm" id="largura_cabine" name="largura_cabine" value="{{ largura_cabine|floatformat:2 }}" readonly>
         </div>
         <div class="mb-2">
           <label for="comprimento_cabine" class="form-label small mb-1">Comprimento da Cabine (m)</label>
-          <input type="number" class="form-control form-control-sm" id="comprimento_cabine" name="comprimento_cabine" readonly>
+          <input type="number" class="form-control form-control-sm" id="comprimento_cabine" name="comprimento_cabine" value="{{ comprimento_cabine|floatformat:2 }}" readonly>
         </div>
         <div class="mb-2">
           <label for="altura_cabine" class="form-label small mb-1">Altura da Cabine (m)</label>
-          <input type="number" class="form-control form-control-sm" id="altura_cabine" name="altura_cabine" min="0.01" max="5.0" step="0.01" required>
+          <input type="number" class="form-control form-control-sm" id="altura_cabine" name="altura_cabine" min="0.01" max="5.0" step="0.01" value="{{ respostas.Altura_da_Cabine|default:altura_inicial }}" required>
         </div>
       </div>
     </div>
@@ -131,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const espessura = document.getElementById('espessura');
     espessura.innerHTML = '';
     let options;
+    
     switch(material.value) {
       case 'Alumínio':
         options = ['1,2', '2,0'];
@@ -138,10 +136,16 @@ document.addEventListener('DOMContentLoaded', function() {
       default:
         options = ['1,2', '1,5'];
     }
+    
+    const espessuraSalva = "{{ respostas.Espessura|default:'' }}";
+    
     options.forEach(opt => {
       const option = document.createElement('option');
       option.value = opt;
       option.textContent = opt;
+      if (opt === espessuraSalva) {
+        option.selected = true;
+      }
       espessura.appendChild(option);
     });
   }
@@ -158,15 +162,50 @@ document.addEventListener('DOMContentLoaded', function() {
   piso.addEventListener('change', updatePiso);
   materialPiso.addEventListener('change', updateMaterialPiso);
 
+  // Executar no carregamento para configurar corretamente
   updateMaterial();
   updatePiso();
   updateMaterialPiso();
 
-  // Aqui você pode adicionar a lógica para calcular e preencher as dimensões da cabine
-  // baseado nos dados do elevador e das portas
-
   form.addEventListener('submit', function(e) {
-    // Adicione aqui qualquer validação adicional que você queira fazer antes de enviar o formulário
+    // Validações antes do envio do formulário
+    if (material.value === 'Outro') {
+      const outroNome = document.getElementById('outro_nome');
+      const outroValor = document.getElementById('outro_valor');
+      
+      if (!outroNome.value.trim()) {
+        e.preventDefault();
+        alert('Por favor, informe o nome do material.');
+        outroNome.focus();
+        return;
+      }
+      
+      if (!outroValor.value || parseFloat(outroValor.value) <= 0) {
+        e.preventDefault();
+        alert('Por favor, informe um valor válido para o material.');
+        outroValor.focus();
+        return;
+      }
+    }
+    
+    if (piso.value === 'Por conta da empresa' && materialPiso.value === 'Outro') {
+      const outroNomePiso = document.getElementById('outro_nome_piso');
+      const outroValorPiso = document.getElementById('outro_valor_piso');
+      
+      if (!outroNomePiso.value.trim()) {
+        e.preventDefault();
+        alert('Por favor, informe o nome do material do piso.');
+        outroNomePiso.focus();
+        return;
+      }
+      
+      if (!outroValorPiso.value || parseFloat(outroValorPiso.value) <= 0) {
+        e.preventDefault();
+        alert('Por favor, informe um valor válido para o material do piso.');
+        outroValorPiso.focus();
+        return;
+      }
+    }
   });
 });
 </script>

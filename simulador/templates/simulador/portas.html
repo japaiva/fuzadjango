@@ -14,40 +14,40 @@
         <div class="mb-2">
           <label for="modelo_porta" class="form-label small mb-1">Modelo Porta Cabine</label>
           <select id="modelo_porta" name="modelo_porta" class="form-select form-select-sm" required>
-            <option value="Automática">Automática</option>
-            <option value="Pantográfica">Pantográfica</option>
-            <option value="Pivotante">Pivotante</option>
-            <option value="Guilhotina">Guilhotina</option>
-            <option value="Camarão">Camarão</option>
-            <option value="Cancela">Cancela</option>
-            <option value="Rampa">Rampa</option>
+            <option value="Automática" {% if respostas.Modelo_Porta == "Automática" %}selected{% endif %}>Automática</option>
+            <option value="Pantográfica" {% if respostas.Modelo_Porta == "Pantográfica" %}selected{% endif %}>Pantográfica</option>
+            <option value="Pivotante" {% if respostas.Modelo_Porta == "Pivotante" %}selected{% endif %}>Pivotante</option>
+            <option value="Guilhotina" {% if respostas.Modelo_Porta == "Guilhotina" %}selected{% endif %}>Guilhotina</option>
+            <option value="Camarão" {% if respostas.Modelo_Porta == "Camarão" %}selected{% endif %}>Camarão</option>
+            <option value="Cancela" {% if respostas.Modelo_Porta == "Cancela" %}selected{% endif %}>Cancela</option>
+            <option value="Rampa" {% if respostas.Modelo_Porta == "Rampa" %}selected{% endif %}>Rampa</option>
           </select>
         </div>
         <div class="mb-2">
           <label for="material_porta" class="form-label small mb-1">Material</label>
           <select id="material_porta" name="material_porta" class="form-select form-select-sm">
-            <option value="Inox">Inox</option>
-            <option value="Chapa Pintada">Chapa Pintada</option>
-            <option value="Alumínio">Alumínio</option>
-            <option value="Outro">Outro</option>
+            <option value="Inox" {% if respostas.Material_Porta == "Inox" %}selected{% endif %}>Inox</option>
+            <option value="Chapa Pintada" {% if respostas.Material_Porta == "Chapa Pintada" %}selected{% endif %}>Chapa Pintada</option>
+            <option value="Alumínio" {% if respostas.Material_Porta == "Alumínio" %}selected{% endif %}>Alumínio</option>
+            <option value="Outro" {% if respostas.Material_Porta == "Outro" %}selected{% endif %}>Outro</option>
           </select>
         </div>
         <div id="outro_material_porta" style="display: none;">
           <div class="mb-2">
             <label for="outro_nome_porta" class="form-label small mb-1">Nome do Material</label>
-            <input type="text" class="form-control form-control-sm" id="outro_nome_porta" name="outro_nome_porta">
+            <input type="text" class="form-control form-control-sm" id="outro_nome_porta" name="outro_nome_porta" value="{{ respostas.Material_Porta_Outro_Nome|default:'' }}">
           </div>
           <div class="mb-2">
             <label for="outro_valor_porta" class="form-label small mb-1">Valor do Material</label>
-            <input type="number" class="form-control form-control-sm" id="outro_valor_porta" name="outro_valor_porta" min="0" step="0.01">
+            <input type="number" class="form-control form-control-sm" id="outro_valor_porta" name="outro_valor_porta" min="0" step="0.01" value="{{ respostas.Material_Porta_Outro_Valor|default:'' }}">
           </div>
         </div>
         <div class="mb-2" id="folhas_porta_div" style="display: none;">
           <label for="folhas_porta" class="form-label small mb-1">Folhas da Porta</label>
           <select id="folhas_porta" name="folhas_porta" class="form-select form-select-sm">
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="Central">Central</option>
+            <option value="2" {% if respostas.Folhas_Porta == "2" %}selected{% endif %}>2</option>
+            <option value="3" {% if respostas.Folhas_Porta == "3" %}selected{% endif %}>3</option>
+            <option value="Central" {% if respostas.Folhas_Porta == "Central" %}selected{% endif %}>Central</option>
           </select>
         </div>
       </div>
@@ -57,40 +57,40 @@
         <div class="mb-2">
           <label for="modelo_porta_pav" class="form-label small mb-1">Modelo Porta Pavimento</label>
           <select id="modelo_porta_pav" name="modelo_porta_pav" class="form-select form-select-sm" required>
-            <option value="Automática">Automática</option>
-            <option value="Pantográfica">Pantográfica</option>
-            <option value="Pivotante">Pivotante</option>
-            <option value="Guilhotina">Guilhotina</option>
-            <option value="Camarão">Camarão</option>
-            <option value="Cancela">Cancela</option>
-            <option value="Rampa">Rampa</option>
+            <option value="Automática" {% if respostas.Modelo_Porta_Pavimento == "Automática" %}selected{% endif %}>Automática</option>
+            <option value="Pantográfica" {% if respostas.Modelo_Porta_Pavimento == "Pantográfica" %}selected{% endif %}>Pantográfica</option>
+            <option value="Pivotante" {% if respostas.Modelo_Porta_Pavimento == "Pivotante" %}selected{% endif %}>Pivotante</option>
+            <option value="Guilhotina" {% if respostas.Modelo_Porta_Pavimento == "Guilhotina" %}selected{% endif %}>Guilhotina</option>
+            <option value="Camarão" {% if respostas.Modelo_Porta_Pavimento == "Camarão" %}selected{% endif %}>Camarão</option>
+            <option value="Cancela" {% if respostas.Modelo_Porta_Pavimento == "Cancela" %}selected{% endif %}>Cancela</option>
+            <option value="Rampa" {% if respostas.Modelo_Porta_Pavimento == "Rampa" %}selected{% endif %}>Rampa</option>
           </select>
         </div>
         <div class="mb-2">
           <label for="material_porta_pav" class="form-label small mb-1">Material</label>
           <select id="material_porta_pav" name="material_porta_pav" class="form-select form-select-sm">
-            <option value="Inox">Inox</option>
-            <option value="Chapa Pintada">Chapa Pintada</option>
-            <option value="Alumínio">Alumínio</option>
-            <option value="Outro">Outro</option>
+            <option value="Inox" {% if respostas.Material_Porta_Pavimento == "Inox" %}selected{% endif %}>Inox</option>
+            <option value="Chapa Pintada" {% if respostas.Material_Porta_Pavimento == "Chapa Pintada" %}selected{% endif %}>Chapa Pintada</option>
+            <option value="Alumínio" {% if respostas.Material_Porta_Pavimento == "Alumínio" %}selected{% endif %}>Alumínio</option>
+            <option value="Outro" {% if respostas.Material_Porta_Pavimento == "Outro" %}selected{% endif %}>Outro</option>
           </select>
         </div>
         <div id="outro_material_porta_pav" style="display: none;">
           <div class="mb-2">
             <label for="outro_nome_porta_pav" class="form-label small mb-1">Nome do Material</label>
-            <input type="text" class="form-control form-control-sm" id="outro_nome_porta_pav" name="outro_nome_porta_pav">
+            <input type="text" class="form-control form-control-sm" id="outro_nome_porta_pav" name="outro_nome_porta_pav" value="{{ respostas.Material_Porta_Pavimento_Outro_Nome|default:'' }}">
           </div>
           <div class="mb-2">
             <label for="outro_valor_porta_pav" class="form-label small mb-1">Valor do Material</label>
-            <input type="number" class="form-control form-control-sm" id="outro_valor_porta_pav" name="outro_valor_porta_pav" min="0" step="0.01">
+            <input type="number" class="form-control form-control-sm" id="outro_valor_porta_pav" name="outro_valor_porta_pav" min="0" step="0.01" value="{{ respostas.Material_Porta_Pavimento_Outro_Valor|default:'' }}">
           </div>
         </div>
         <div class="mb-2" id="folhas_porta_pav_div" style="display: none;">
           <label for="folhas_porta_pav" class="form-label small mb-1">Folhas da Porta</label>
           <select id="folhas_porta_pav" name="folhas_porta_pav" class="form-select form-select-sm">
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="Central">Central</option>
+            <option value="2" {% if respostas.Folhas_Porta_Pavimento == "2" %}selected{% endif %}>2</option>
+            <option value="3" {% if respostas.Folhas_Porta_Pavimento == "3" %}selected{% endif %}>3</option>
+            <option value="Central" {% if respostas.Folhas_Porta_Pavimento == "Central" %}selected{% endif %}>Central</option>
           </select>
         </div>
       </div>
@@ -99,19 +99,19 @@
         <h6 class="border-bottom pb-1 mb-2">Dimensões das Portas</h6>
         <div class="mb-2">
           <label for="largura_porta" class="form-label small mb-1">Largura Porta Cabine (m)</label>
-          <input type="number" class="form-control form-control-sm" id="largura_porta" name="largura_porta" min="0.1" max="5.0" step="0.01" value="0.8" required>
+          <input type="number" class="form-control form-control-sm" id="largura_porta" name="largura_porta" min="0.1" max="5.0" step="0.01" value="{{ respostas.Largura_Porta|default:'0.8' }}" required>
         </div>
         <div class="mb-2">
           <label for="altura_porta" class="form-label small mb-1">Altura Porta Cabine (m)</label>
-          <input type="number" class="form-control form-control-sm" id="altura_porta" name="altura_porta" min="0.1" max="5.0" step="0.01" value="2.0" required>
+          <input type="number" class="form-control form-control-sm" id="altura_porta" name="altura_porta" min="0.1" max="5.0" step="0.01" value="{{ respostas.Altura_Porta|default:'2.0' }}" required>
         </div>
         <div class="mb-2">
           <label for="largura_porta_pav" class="form-label small mb-1">Largura Porta Pavimento (m)</label>
-          <input type="number" class="form-control form-control-sm" id="largura_porta_pav" name="largura_porta_pav" min="0.1" max="5.0" step="0.01" value="0.8" required>
+          <input type="number" class="form-control form-control-sm" id="largura_porta_pav" name="largura_porta_pav" min="0.1" max="5.0" step="0.01" value="{{ respostas.Largura_Porta_Pavimento|default:'0.8' }}" required>
         </div>
         <div class="mb-2">
           <label for="altura_porta_pav" class="form-label small mb-1">Altura Porta Pavimento (m)</label>
-          <input type="number" class="form-control form-control-sm" id="altura_porta_pav" name="altura_porta_pav" min="0.1" max="5.0" step="0.01" value="2.0" required>
+          <input type="number" class="form-control form-control-sm" id="altura_porta_pav" name="altura_porta_pav" min="0.1" max="5.0" step="0.01" value="{{ respostas.Altura_Porta_Pavimento|default:'2.0' }}" required>
         </div>
       </div>
     </div>
@@ -157,6 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
   modeloPortaPav.addEventListener('change', updatePortaPavimento);
   materialPortaPav.addEventListener('change', updatePortaPavimento);
 
+  // Executar no carregamento para configurar corretamente
   updatePortaCabine();
   updatePortaPavimento();
 

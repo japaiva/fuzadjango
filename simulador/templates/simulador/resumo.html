@@ -1,33 +1,131 @@
 {% extends 'simulador/base.html' %}
-{% block title %}Resumo - Simulador{% endblock %}
+{% block title %}Resumo da Simulação - Simulador{% endblock %}
 {% block content %}
-<div class="container bg-light text-dark p-4 rounded shadow mt-4">
-  <h2 class="mb-4">Resumo da Simulação</h2>
+<div class="container bg-light text-dark p-3 rounded shadow" style="margin-top: 80px;">
 
-  {% if respostas %}
-    {% for etapa, dados in respostas.items %}
-      <div class="mb-4">
-        <h5 class="text-primary">{{ etapa|title }}</h5>
-        <ul class="list-group">
-          {% for chave, valor in dados.items %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span>{{ chave|capfirst }}</span>
-              <span class="fw-semibold">{{ valor }}</span>
-            </li>
-          {% endfor %}
-        </ul>
+  <div class="border-bottom pb-2 mb-3">
+    <h5 class="mb-0">Resumo da Simulação</h5>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6">
+      <h6 class="border-bottom pb-1 mb-3">Configurações</h6>
+      
+      {% for pagina, dados in respostas_agrupadas.items %}
+        <div class="card mb-3">
+          <div class="card-header bg-secondary text-white">{{ pagina }}</div>
+          <div class="card-body">
+            {% if pagina == "Portas" %}
+              <h6 class="border-bottom pb-1 mb-2">Portas de Cabine</h6>
+              {% for chave, valor in dados.items %}
+                {% if "Pavimento" not in chave %}
+                  <p><strong>{{ chave }}:</strong> {{ valor }}</p>
+                {% endif %}
+              {% endfor %}
+              
+              <h6 class="border-bottom pb-1 mt-3 mb-2">Portas de Pavimento</h6>
+              {% for chave, valor in dados.items %}
+                {% if "Pavimento" in chave %}
+                  <p><strong>{{ chave }}:</strong> {{ valor }}</p>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              {% for chave, valor in dados.items %}
+                <p><strong>{{ chave }}:</strong> {{ valor }}</p>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      {% empty %}
+        <div class="alert alert-warning">
+          Nenhuma informação disponível. Por favor, complete todas as etapas da simulação.
+        </div>
+      {% endfor %}
+    </div>
+    
+    <div class="col-md-6">
+      <h6 class="border-bottom pb-1 mb-3">Cálculos</h6>
+      
+      <div class="card mb-3">
+        <div class="card-header bg-primary text-white">Ficha Técnica</div>
+        <div class="card-body">
+          <p><strong>Dimensões Cabine:</strong> {{ dimensionamento.cab.largura|floatformat:2 }}m L x 
+             {{ dimensionamento.cab.compr|floatformat:2 }}m C x 
+             {{ dimensionamento.cab.altura|floatformat:2 }}m A</p>
+          <p><strong>Capacidade e Tração Cabine:</strong> 
+             {{ dimensionamento.cab.capacidade|floatformat:2 }} kg, 
+             {{ dimensionamento.cab.tracao|floatformat:2 }} kg</p>
+        </div>
       </div>
-    {% endfor %}
-  {% else %}
-    <p class="text-danger">Nenhuma informação preenchida ainda.</p>
-  {% endif %}
-
-  <div class="text-center mt-5">
-    <form method="post" action="{% url 'simulador:reiniciar_simulacao' %}" class="d-inline">
+      
+      {% if user_level != 'vendedor' %}
+      <div class="card mb-3">
+        <div class="card-header bg-info text-white">Cálculo Dimensionamento</div>
+        <div class="card-body">
+          {{ explicacao|linebreaks }}
+        </div>
+      </div>
+      
+      <div class="card mb-3">
+        <div class="card-header bg-info text-white">Componentes</div>
+        <div class="card-body">
+          {% for grupo_nome, subgrupos in grupos.items %}
+            <h6 class="border-bottom pb-1 mb-2">{{ grupo_nome }}</h6>
+            {% for subgrupo_nome, itens in subgrupos.items %}
+              <p class="mb-1"><strong>{{ subgrupo_nome }}</strong></p>
+              <ul class="mb-3">
+                {% for item in itens %}
+                  <li>
+                    <strong>{{ item.descricao }}</strong> ({{ item.codigo }}) - 
+                    {{ item.quantidade|floatformat:2 }} {{ item.unidade }},
+                    Custo: R$ {{ item.custo_total|floatformat:2 }}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endfor %}
+          {% endfor %}
+          
+          <div class="alert alert-secondary">
+            <h5 class="mb-0">Custo Total: R$ {{ custo_total|floatformat:2 }}</h5>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      
+      <div class="alert alert-success">
+        <h4 class="mb-2">O custo estimado para este modelo é de:</h4>
+        <h3 class="mb-0">R$ {{ custo_total|floatformat:2 }}</h3>
+      </div>
+      
+      {% if user_level != 'vendedor' %}
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <form method="post" action="{% url 'simulador:gerar_pdf' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary w-100">Gerar PDF</button>
+          </form>
+        </div>
+        <div class="col-md-6">
+          <form method="post" action="{% url 'simulador:proposta_comercial' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success w-100">Gerar Proposta Comercial</button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  
+  <div class="d-flex justify-content-between mt-3">
+    <a href="{% url 'simulador:cabine' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-chevron-left"></i> Voltar
+    </a>
+    <form method="post" action="{% url 'simulador:reiniciar_simulacao' %}">
       {% csrf_token %}
-      <button type="submit" class="btn btn-danger btn-lg">Nova Simulação</button>
+      <button type="submit" class="btn btn-warning btn-sm">
+        <i class="fas fa-redo"></i> Iniciar Nova Simulação
+      </button>
     </form>
   </div>
 </div>
 {% endblock %}
-

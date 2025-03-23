@@ -12,13 +12,13 @@
       <div class="col-md-4">
         <div class="mb-2">
           <label for="nome_cliente" class="form-label small mb-1">Nome do Solicitante</label>
-          <input type="text" class="form-control form-control-sm" id="nome_cliente" name="nome_cliente" required value="{{ form.nome_cliente.value|default_if_none:'' }}">
+          <input type="text" class="form-control form-control-sm" id="nome_cliente" name="nome_cliente" required value="{{ form.nome_cliente }}">
         </div>
       </div>
       <div class="col-md-4">
         <div class="mb-2">
           <label for="nome_empresa" class="form-label small mb-1">Nome da Empresa</label>
-          <input type="text" class="form-control form-control-sm" id="nome_empresa" name="nome_empresa" value="{{ form.nome_empresa.value|default_if_none:'' }}">
+          <input type="text" class="form-control form-control-sm" id="nome_empresa" name="nome_empresa" value="{{ form.nome_empresa }}">
         </div>
       </div>
       <div class="col-md-4">

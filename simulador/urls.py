@@ -13,6 +13,13 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'), 
     path('reiniciar/', views.reiniciar_simulacao, name='reiniciar_simulacao'),
 
+    # Novas URLs para PDFs
+    path('gerar-pdf/', views.gerar_pdf, name='gerar_pdf'),
+    path('proposta-comercial/', views.proposta_comercial, name='proposta_comercial'),
+    
+    # URLs de autenticação
+    path('logout/', views.logout_view, name='logout'),
+
     # URLs para Usuários
     path('usuarios/', views.usuario_list, name='usuario_list'),
     path('usuarios/create/', views.usuario_create, name='usuario_create'),
