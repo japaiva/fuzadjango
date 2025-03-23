@@ -547,7 +547,7 @@ def gerar_pdf(request):
     componentes, custos, custo_total, todos_custos = calcular_componentes(dimensionamento, respostas)
     
     # Agrupar respostas por página para exibição
-    from .utils.helpers import agrupar_respostas_por_pagina
+    from .utils.utils import agrupar_respostas_por_pagina
     respostas_agrupadas = agrupar_respostas_por_pagina(respostas)
     
     # Preparar grupos de componentes
@@ -562,7 +562,7 @@ def gerar_pdf(request):
         grupos[grupo][subgrupo].append(info)
     
     # Gerar o PDF
-    from .utils.pdf_utils import gerar_pdf_demonstrativo
+    from .utils.pdfutils import gerar_pdf_demonstrativo  # Corrigido de pdf_utils para pdfutils
     pdf_bytes = gerar_pdf_demonstrativo(
         dimensionamento,
         explicacao,
@@ -597,7 +597,7 @@ def proposta_comercial(request):
     componentes, custos, custo_total, todos_custos = calcular_componentes(dimensionamento, respostas)
     
     # Agrupar respostas por página para exibição
-    from .utils.helpers import agrupar_respostas_por_pagina
+    from .utils.utils import agrupar_respostas_por_pagina  # Corrigido de helpers para utils
     respostas_agrupadas = agrupar_respostas_por_pagina(respostas)
     
     # Pegar nome do cliente e empresa
@@ -605,7 +605,7 @@ def proposta_comercial(request):
     empresa = respostas.get("Empresa", "")
     
     # Gerar o PDF
-    from .utils.pdf_utils import gerar_pdf_proposta_comercial
+    from .utils.pdfutils import gerar_pdf_proposta_comercial  # Corrigido de pdf_utils para pdfutils
     pdf_bytes = gerar_pdf_proposta_comercial(
         dimensionamento,
         componentes,
