@@ -1,14 +1,22 @@
-/* Estilos Gerais */
 body {
     font-family: 'Arial', sans-serif;
-    background: url("/static/simulador/elevator.jpg") no-repeat center center fixed;
+    background: url("../simulador/elevator.jpg") no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-/* Layout containers */
+/* Ajuste para o main que já tem margin-top inline */
+main.container {
+    flex: 1; /* Para preencher o espaço disponível */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estilos específicos para content-box */
 .content-box {
     background-color: rgba(0, 0, 0, 0.7);
     padding: 2rem;
@@ -17,429 +25,10 @@ body {
     text-align: center;
     max-width: 500px;
     width: 100%;
-}
-
-.content-wrapper {
-    max-width: 600px;
     margin: 0 auto;
-    padding: 20px;
 }
 
-.login-box {
-    max-width: 300px;
-    width: 100%;
-}
-
-.form-container {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Tipografia */
-.content-box h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-}
-
-.content-box h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    color: #ffc107;
-}
-
-.form-container h2 {
-    color: #333;
-}
-
-/* Navegação */
-.navbar {
-    background-color: rgba(0, 0, 0, 0.7) !important;
-}
-
-.navbar .btn {
-    height: 36px !important;
-    min-height: 36px !important;
-    line-height: 24px !important;
-    font-size: 0.875rem;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin-top: 0;
-}
-
-.navbar .btn i {
-    margin-right: 5px;
-}
-
-.navbar-nav .nav-link.active {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 0.25rem;
-}
-
-/* Menu Dropdown */
-.dropdown-menu {
-    border: none;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    margin-top: 0.5rem;
-}
-
-.dropdown-item {
-    padding: 0.5rem 1rem;
-    transition: all 0.2s ease;
-}
-
-.dropdown-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.dropdown-item i {
-    width: 20px;
-    text-align: center;
-    margin-right: 0.5rem;
-}
-
-.nav-link.dropdown-toggle::after {
-    transition: transform 0.2s ease;
-}
-
-.nav-link.dropdown-toggle[aria-expanded="true"]::after {
-    transform: rotate(180deg);
-}
-
-/* Footer */
-.footer {
-    background-color: rgba(0, 0, 0, 0.7);
-    color: #ffffff;
-    padding: 1rem 0;
-    margin-top: auto;
-}
-
-/* Formulários */
-.form-label {
-    color: #495057;
-    text-align: left;
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-.form-label.small {
-    font-size: 0.875rem;
-}
-
-.form-control, .form-select {
-    background-color: #fff;
-    border: 1px solid #ced4da;
-    color: #495057;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-.form-control-sm, .form-select-sm {
-    font-size: 0.875rem;
-    height: calc(1.5em + 0.5rem + 2px);
-    padding: 0.25rem 0.5rem;
-}
-
-/* Botões */
-.btn {
-    margin-top: 1rem;
-    transition: all 0.3s ease;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #004085;
-}
-
-.btn-warning {
-    color: #212529;
-    background-color: #ffc107;
-    border-color: #ffc107;
-}
-
-.btn-outline-light {
-    color: #f8f9fa;
-    border-color: #f8f9fa;
-}
-
-.btn-outline-secondary {
-    color: #6c757d;
-    border-color: #6c757d;
-}
-
-.btn-outline-secondary:hover {
-    color: #fff;
-    background-color: #6c757d;
-    border-color: #6c757d;
-}
-
-.btn-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100px;
-    height: 34px;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    border-radius: 0.2rem;
-}
-
-.btn-nav:hover, .area-administrativa .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.btn-nav i, .area-administrativa .btn i {
-    margin: 0 5px;
-    transition: all 0.3s ease;
-}
-
-.area-administrativa .btn:hover i {
-    transform: scale(1.2);
-}
-
-/* Área Administrativa */
-.area-administrativa {
-    transition: all 0.3s ease;
-    margin-top: 2rem;
-    border-radius: 0.5rem;
-}
-
-.area-administrativa .btn {
-    transition: all 0.2s ease;
-    min-width: 120px;
-}
-
-/* Componentes */
-.progress {
-    height: 10px;
-    background-color: #e9ecef;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    background-color: #007bff;
-}
-
-/* Ajustes para a barra de navegação e botões de autenticação */
-.navbar-auth {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-}
-
-.auth-btn {
-    padding: 0.4rem 1rem;
-    height: auto !important;
-    margin-top: 0;
-    display: flex;
-    align-items: center;
-}
-
-/* Melhorias para a página inicial */
-.home-content {
-    max-width: 550px;
-    padding: 2.5rem;
-    text-align: center;
-}
-
-.logo-area {
-    padding-bottom: 1.5rem;
-}
-
-.logo-area .fa-elevator {
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-    transition: transform 0.5s ease, filter 0.5s ease;
-}
-
-.logo-area:hover .fa-elevator {
-    transform: translateY(-5px);
-    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
-}
-
-.home-content h1 {
-    font-size: 2.75rem;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.home-content h2 {
-    font-size: 1.5rem;
-    margin-bottom: 0;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-.home-content .lead {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 1.1rem;
-}
-
-.action-button {
-    padding: 0.75rem 2rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-}
-
-.action-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-}
-
-.action-button.pulse {
-    animation: pulse 2s infinite;
-}
-
-.home-footer {
-    opacity: 0.7;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-    }
-}
-
-/* Estilo para as mensagens auto-dismiss */
-.auto-dismiss-alert {
-    animation: fadeInDown 0.5s;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    margin-bottom: 0.5rem;
-}
-
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.alert-success {
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-    color: #155724;
-}
-
-.alert-danger {
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
-    color: #721c24;
-}
-
-.alert-warning {
-    background-color: #fff3cd;
-    border-color: #ffeeba;
-    color: #856404;
-}
-
-.alert-info {
-    background-color: #d1ecf1;
-    border-color: #bee5eb;
-    color: #0c5460;
-}
-
-/* Login form styling */
-.content-box form p {
-    margin-bottom: 1rem;
-    text-align: left;
-}
-
-.content-box form label {
-    display: block;
-    margin-bottom: 0.3rem;
-    color: #e0e0e0;
-    font-size: 0.9rem;
-}
-
-.content-box form input {
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: none;
-    background-color: rgba(255, 255, 255, 0.85);
-}
-
-/* Estilos para cards colapsáveis */
-.card-collapsible .card-header {
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.card-collapsible .card-header:hover {
-    filter: brightness(110%);
-}
-
-.collapse-header {
-    position: relative;
-    padding-right: 30px;
-}
-
-.collapse-icon {
-    transition: transform 0.3s ease;
-}
-
-.collapse-header[aria-expanded="true"] .collapse-icon {
-    transform: rotate(180deg);
-}
-
-/* Animação para abrir/fechar collapse */
-.collapse {
-    transition: height 0.35s ease;
-    overflow: hidden;
-}
-
-.collapse:not(.show) {
-    display: none;
-}
-
-.collapse.show {
-    display: block;
-}
-
-/* Estilo para hover nos cards */
-.card-collapsible {
-    transition: box-shadow 0.3s ease;
-}
-
-.card-collapsible:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Melhorias para o resumo em dispositivos móveis */
-@media (max-width: 767.98px) {
-    .card-collapsible .card-header {
-        padding: 0.5rem 0.75rem;
-    }
-    
-    .card-collapsible .card-body {
-        padding: 0.75rem;
-    }
-}
-
-/* Novas caixas de conteúdo modernas */
+/* Estilos para a versão moderna da caixa */
 .modern-content-box {
     background-color: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(10px);
@@ -454,8 +43,10 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
+    margin: 0 auto;
 }
 
+/* Adicionar detalhe de linha superior à caixa moderna */
 .modern-content-box::before {
     content: '';
     position: absolute;
@@ -467,7 +58,7 @@ body {
     z-index: 1;
 }
 
-/* Logo e título da página inicial */
+/* Elementos da página inicial moderna */
 .logo-container {
     margin-bottom: 2rem;
     position: relative;
@@ -526,69 +117,7 @@ body {
     line-height: 1.2;
 }
 
-.description-block {
-    margin-bottom: 2.5rem;
-    padding: 0 1rem;
-}
-
-.description-text {
-    color: #9ca3af;
-    font-size: 1.1rem;
-    line-height: 1.6;
-}
-
-.action-container {
-    margin-top: 2rem;
-}
-
-/* Botão moderno */
-.modern-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
-    font-weight: 500;
-    padding: 0.85rem 2.5rem;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1rem;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    text-decoration: none;
-    position: relative;
-    overflow: hidden;
-}
-
-.modern-button::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: all 0.6s ease;
-}
-
-.modern-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
-    color: white;
-    text-decoration: none;
-}
-
-.modern-button:hover::before {
-    left: 100%;
-}
-
-.modern-button:active {
-    transform: translateY(1px);
-    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
-}
-
-/* Tela de login moderna */
+/* Caixa de login moderna */
 .modern-login-box {
     background-color: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(10px);
@@ -602,6 +131,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
+    margin: 0 auto;
 }
 
 .modern-login-box::before {
@@ -698,10 +228,51 @@ body {
     width: 100%;
 }
 
-.field-error {
-    color: #f87171;
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
+/* Botão moderno */
+.modern-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    font-weight: 500;
+    padding: 0.85rem 2.5rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: all 0.6s ease;
+}
+
+.modern-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.modern-button:hover::before {
+    left: 100%;
+}
+
+.modern-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
 }
 
 /* Animações sutis */
@@ -720,83 +291,51 @@ body {
     }
 }
 
-/* Estilos para destacar valores no dimensionamento */
-.dimensionamento-highlights .highlight-value {
-    font-weight: bold;
-    color: #0056b3;
-    background-color: rgba(0, 123, 255, 0.1);
-    padding: 0.1rem 0.3rem;
-    border-radius: 3px;
-    display: inline-block;
-    margin: 0 2px;
+/* Tipografia */
+.content-box h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
 }
 
-/* Ajustes para o custo estimado na mesma linha */
-.alert-success .d-flex {
-    flex-wrap: nowrap;
+.content-box h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #ffc107;
 }
 
-.alert-success h4 {
-    margin-right: 1rem;
-    white-space: nowrap;
+/* Estilos básicos de formulário */
+.content-box form p {
+    margin-bottom: 1rem;
+    text-align: left;
 }
 
-.alert-success h3 {
-    font-weight: 700;
+.content-box form label {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #e0e0e0;
+    font-size: 0.9rem;
 }
 
-/* Ajustes para dispositivos móveis */
-@media (max-width: 576px) {
-    .alert-success .d-flex {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .alert-success h4 {
-        margin-bottom: 0.5rem;
-    }
+.content-box form input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.85);
 }
 
-/* Estilo para destacar valores tanto na aba Dimensionamento quanto na aba Componentes */
-.dimensionamento-highlights .highlight-value,
-#collapse-dimensionamento .highlight-value {
-    font-weight: bold;
-    color: #0056b3;
-    background-color: rgba(0, 123, 255, 0.1);
-    padding: 0.1rem 0.3rem;
-    border-radius: 3px;
-    display: inline-block;
-    margin: 0 2px;
+/* Ajustes para o rodapé usando as classes que você já tem no HTML */
+.footer.mt-auto {
+    margin-top: auto; /* Para ficar no fim da página */
 }
 
-/* Estilo para valores monetários */
-.valor-monetario {
-    font-weight: bold;
-    color: #155724;
+/* MUITO IMPORTANTE: Preserve estas regras para o dropdown funcionar */
+.navbar-nav .nav-item.dropdown {
+    position: relative;
+    overflow: visible;
 }
 
-/* Ajustes para o custo estimado na mesma linha */
-.alert-success .d-flex {
-    flex-wrap: nowrap;
-}
-
-.alert-success h4 {
-    margin-right: 1rem;
-    white-space: nowrap;
-}
-
-.alert-success h3 {
-    font-weight: 700;
-}
-
-/* Ajustes para dispositivos móveis */
-@media (max-width: 576px) {
-    .alert-success .d-flex {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .alert-success h4 {
-        margin-bottom: 0.5rem;
-    }
+/* Garantir que o dropdown seja exibido quando aberto */
+.dropdown-menu.show {
+    display: block;
 }

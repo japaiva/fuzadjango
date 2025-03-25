@@ -621,3 +621,7 @@ def proposta_comercial(request):
     response = HttpResponse(pdf_bytes, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="proposta_comercial.pdf"'
     return response
+
+
+def samba(request):
+    return render(request, 'simulador/samba.html')
