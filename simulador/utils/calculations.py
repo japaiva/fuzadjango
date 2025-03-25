@@ -69,17 +69,35 @@ def calcular_dimensionamento_completo(respostas: dict):
     # Calcular chapas
     chapas_info = calcular_chapas_cabine(altura, largura, comprimento)
     
-    # Gerar explicações detalhadas
+    # Formatar os números no padrão brasileiro
+    def formato_br(valor):
+        """Formata um número para o padrão brasileiro (1.234,56)"""
+        try:
+            # Verificar se é um número
+            numero = float(valor)
+            # Formatar com vírgula como decimal e ponto como separador de milhar
+            valor_formatado = f"{numero:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+            return f'<span class="highlight-value">{valor_formatado}</span>'
+        except (ValueError, TypeError):
+            # Se não for um número, retorna o valor original
+            return valor
+    
+    # Gerar explicações detalhadas usando HTML corretamente
     explicacoes = f"""
-    **Dimensões Cabine:** Largura: Poço = {largura_poco:.2f}m - ({sub_largura:.2f}m)
-    {'-Contrapeso lateral (0,23m),' if contrapeso == 'Lateral' else ''}={largura:.2f}m; 
-    Comprimento: Poço = {comprimento_poco:.2f}m - (0.10m) - Ajuste de porta {modelo_porta} {f'({folhas_porta} folhas)' if folhas_porta else ''} {'(x2 pois saída é oposta)' if saida == 'Oposta' else ''} ({ajuste_porta:.2f}m)
-    {'- Contrapeso traseiro (0,23m)' if contrapeso == 'Traseiro' else ''} = {comprimento:.2f}m; Altura: Informada pelo usuário = {altura:.2f}m
+    <strong>Dimensões Cabine:</strong> Largura: Poço = {formato_br(largura_poco)}m - ({formato_br(sub_largura)}m)
+    {' -Contrapeso lateral (0,23m),' if contrapeso == 'Lateral' else ''} = {formato_br(largura)}m; 
+    Comprimento: Poço = {formato_br(comprimento_poco)}m - (0,10m) - Ajuste de porta {modelo_porta} {f'({folhas_porta} folhas)' if folhas_porta else ''} {'(x2 pois saída é oposta)' if saida == 'Oposta' else ''} ({formato_br(ajuste_porta)}m)
+    {' - Contrapeso traseiro (0,23m)' if contrapeso == 'Traseiro' else ''} = {formato_br(comprimento)}m; Altura: Informada pelo usuário = {formato_br(altura)}m
     """
-    explicacoes += f"\n**Capacidade e Tração Cabine**: {'pessoas' if 'Passageiro' in modelo else 'kg'} {capacidade_original} {'* 80 kg' if 'Passageiro' in modelo else ''} = {capacidade_cabine:.2f} kg; (Capacidade Cabine / 2) + 500 = {tracao_cabine:.2f} kg.\n"
+    explicacoes += f"\n<strong>Capacidade e Tração Cabine</strong>: {'pessoas' if 'Passageiro' in modelo else 'kg'} {formato_br(capacidade_original)} {'* 80 kg' if 'Passageiro' in modelo else ''} = {formato_br(capacidade_cabine)} kg; (Capacidade Cabine / 2) + 500 = {formato_br(tracao_cabine)} kg.\n"
     
     if isinstance(chapas_info, dict):
-        explicacoes += "\n" + formatar_demanda_placas(chapas_info)
+        # Aqui está a correção principal - garantir que as tags <strong> estejam corretamente fechadas
+        explicacoes += f"\n<strong>Painéis Corpo Cabine</strong>: Laterais: {chapas_info['num_paineis_lateral']} de {formato_br(chapas_info['largura_painel_lateral']*100)}cm (com dobras {formato_br((chapas_info['largura_painel_lateral']+0.085)*100)}cm), {formato_br(chapas_info['altura_painel_lateral'])}m altura; Fundo: {chapas_info['num_paineis_fundo']} de {formato_br(chapas_info['largura_painel_fundo']*100)}cm (com dobras {formato_br((chapas_info['largura_painel_fundo']+0.085)*100)}cm), {formato_br(chapas_info['altura_painel_fundo'])}m altura; Teto: {chapas_info['num_paineis_teto']} de {formato_br(chapas_info['largura_painel_teto']*100)}cm (com dobras {formato_br((chapas_info['largura_painel_teto']+0.085)*100)}cm), {formato_br(chapas_info['altura_painel_teto'])}m altura."
+        
+        explicacoes += f"\n<strong>Chapas Corpo Cabine</strong>: Laterais e Teto: {chapas_info['num_chapalt']} chapas, sobra/chapa = {formato_br(chapas_info['sobra_chapalt']*100)} cm, Fundo: {chapas_info['num_chapaf']} chapas, sobra/chapa = {formato_br(chapas_info['sobra_chapaf']*100)} cm, Reserva: 2 chapas. Total: {chapas_info['num_chapatot']} chapas."
+        
+        explicacoes += f"\n<strong>Chapas Piso Cabine</strong>:{chapas_info['num_chapa_piso']} chapa(s)."
     else:
         explicacoes += f"\nErro no cálculo de chapas: {chapas_info}"
     

@@ -23,6 +23,7 @@ class Usuario(AbstractUser):
         ('admin', 'Admin'),
         ('engenharia', 'Engenharia'),
         ('vendedor', 'Vendedor'),
+        ('compras', 'Compras'),  # Novo nível adicionado
     ]
 
     # Desabilitar relacionamentos explicitamente

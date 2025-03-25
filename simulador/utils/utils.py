@@ -75,7 +75,7 @@ def agrupar_respostas_por_pagina(respostas):
         return unidades.get(campo, "")
 
     paginas = {
-        "Cliente": ["Solicitante", "Empresa", "Telefone", "Email"],
+        "Cliente": ["Solicitante", "Empresa", "Telefone", "Email", "Faturado por"],  # Adicionado "Faturado por"
         "Elevador": [
             "Modelo do Elevador", "Capacidade", "Acionamento", "Tração", "Contrapeso",
             "Largura do Poço", "Comprimento do Poço", "Altura do Poço", "Pavimentos"

@@ -11,7 +11,6 @@ urlpatterns = [
     path('cabine/', views.cabine, name='cabine'),
     path('resumo/', views.resumo, name='resumo'),
     path('logout/', views.logout_view, name='logout'), 
-    path('samba/', views.samba, name='samba'),
     path('reiniciar/', views.reiniciar_simulacao, name='reiniciar_simulacao'),
 
     # Novas URLs para PDFs

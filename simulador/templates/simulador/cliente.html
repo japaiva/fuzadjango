@@ -22,7 +22,14 @@
         </div>
       </div>
       <div class="col-md-4">
-        <!-- Coluna vazia para manter a consistência com outras páginas -->
+        <div class="mb-2">
+          <label for="faturado_por" class="form-label small mb-1">Faturado por</label>
+          <select id="faturado_por" name="faturado_por" class="form-select form-select-sm" required>
+            <option value="Fuza" {% if form.faturado_por == "Fuza" %}selected{% endif %}>Fuza</option>
+            <option value="Manutenção" {% if form.faturado_por == "Manutenção" %}selected{% endif %}>Manutenção</option>
+            <option value="Elevadores" {% if form.faturado_por == "Elevadores" %}selected{% endif %}>Elevadores</option>
+          </select>
+        </div>
       </div>
     </div>
     

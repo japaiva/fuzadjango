@@ -10,10 +10,6 @@ from io import BytesIO
 from datetime import datetime
 import re
 
-# Remova a importação do streamlit e da database que está causando o erro
-# import streamlit as st
-# from functions.database import get_all_custos
-
 # Função personalizada para formatação de moeda
 def format_currency(value):
     if value is None:

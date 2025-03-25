@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .utils.calculations import calcular_dimensionamento_completo, calcular_componentes
-from .utils.utils import agrupar_respostas_por_pagina  # Certifique-se de que este arquivo existe
+from .utils.utils import agrupar_respostas_por_pagina
 
 from .models import Usuario, Custo, Parametro
 from .forms import UsuarioForm, CustoForm, ParametroForm
@@ -17,6 +17,14 @@ def is_admin(user):
 
 def is_engenharia(user):
     return user.nivel in ['admin', 'engenharia']
+
+# Adicionar esta função para o novo nível de usuário
+def is_compras(user):
+    return user.nivel == 'compras'
+
+# Função para verificar se o usuário pode visualizar custos
+def can_view_custos(user):
+    return user.nivel in ['admin', 'engenharia', 'compras']
 
 # PAGINAS
 
@@ -40,11 +48,13 @@ def cliente(request):
     if request.method == 'POST':
         nome_cliente = request.POST.get('nome_cliente')
         nome_empresa = request.POST.get('nome_empresa')
+        faturado_por = request.POST.get('faturado_por')
         
         if nome_cliente:
             # Salvar diretamente em respostas
             request.session["respostas"]["Solicitante"] = nome_cliente
             request.session["respostas"]["Empresa"] = nome_empresa or ''
+            request.session["respostas"]["Faturado por"] = faturado_por
             
             # Marcar a sessão como modificada
             request.session.modified = True
@@ -57,7 +67,8 @@ def cliente(request):
     respostas = request.session.get("respostas", {})
     form = {
         'nome_cliente': respostas.get('Solicitante', ''),
-        'nome_empresa': respostas.get('Empresa', '')
+        'nome_empresa': respostas.get('Empresa', ''),
+        'faturado_por': respostas.get('Faturado por', 'Fuza')  # Valor padrão é Fuza
     }
     
     return render(request, 'simulador/cliente.html', {'form': form})
@@ -324,7 +335,6 @@ def usuario_list(request):
     except PageNotAnInteger:
         # Se a página não for um inteiro, exibe a primeira página
         usuarios = paginator.page(1)
-
     except EmptyPage:
         # Se a página estiver fora do intervalo, exibe a última página
         usuarios = paginator.page(paginator.num_pages)
@@ -384,7 +394,7 @@ def usuario_delete(request, pk):
 
 # Views para Custos 
 @login_required
-@user_passes_test(is_engenharia)
+@user_passes_test(can_view_custos)  # Permite admin, engenharia e compras
 def custo_list(request):
     custos_list = Custo.objects.all().order_by('codigo')
     
@@ -401,7 +411,13 @@ def custo_list(request):
         # Se a página estiver fora do intervalo, exibe a última página
         custos = paginator.page(paginator.num_pages)
     
-    return render(request, 'simulador/custo_list.html', {'custos': custos})
+    # Verificar se o usuário tem permissão de edição (apenas admin e engenharia)
+    can_edit = is_engenharia(request.user)  # Usa a função existente que já inclui admin
+    
+    return render(request, 'simulador/custo_list.html', {
+        'custos': custos,
+        'can_edit': can_edit
+    })
 
 @login_required
 @user_passes_test(is_engenharia)
@@ -462,7 +478,7 @@ def custo_delete(request, pk):
         return redirect('simulador:custo_list')
     return render(request, 'simulador/custo_confirm_delete.html', {'custo': custo})
 
-# Views para Parâmetros (versão modificada)
+# Views para Parâmetros
 @login_required
 @user_passes_test(is_admin)
 def parametro_list(request):
@@ -621,7 +637,3 @@ def proposta_comercial(request):
     response = HttpResponse(pdf_bytes, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="proposta_comercial.pdf"'
     return response
-
-
-def samba(request):
-    return render(request, 'simulador/samba.html')

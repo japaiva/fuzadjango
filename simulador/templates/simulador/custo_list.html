@@ -15,7 +15,9 @@
                     <th>Descrição</th>
                     <th>Unidade</th>
                     <th>Valor</th>
+                    {% if user.nivel == 'admin' or user.nivel == 'engenharia' %}
                     <th class="text-end" style="width: 100px">Ações</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -25,6 +27,7 @@
                         <td>{{ custo.descricao }}</td>
                         <td>{{ custo.unidade }}</td>
                         <td>R$ {{ custo.valor|floatformat:2 }}</td>
+                        {% if user.nivel == 'admin' or user.nivel == 'engenharia' %}
                         <td class="text-end action-buttons">
                             <a href="{% url 'simulador:custo_update' custo.codigo %}" class="btn btn-outline-primary action-btn" title="Editar">
                                 <i class="fas fa-edit fa-sm"></i>
@@ -33,10 +36,11 @@
                                 <i class="fas fa-trash-alt fa-sm"></i>
                             </a>
                         </td>
+                        {% endif %}
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="5" class="text-center py-2 text-muted">Nenhum custo encontrado</td>
+                        <td colspan="{% if user.nivel == 'admin' or user.nivel == 'engenharia' %}5{% else %}4{% endif %}" class="text-center py-2 text-muted">Nenhum custo encontrado</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -105,9 +109,13 @@
         <div></div> <!-- Espaçador para manter o layout quando não há paginação -->
         {% endif %}
         
+        {% if user.nivel == 'admin' or user.nivel == 'engenharia' %}
         <a href="{% url 'simulador:custo_create' %}" class="btn btn-primary btn-sm">
             <i class="fas fa-plus"></i> Novo Custo
         </a>
+        {% else %}
+        <div></div> <!-- Espaçador para manter o layout quando não tem permissão -->
+        {% endif %}
     </div>
 </div>
 

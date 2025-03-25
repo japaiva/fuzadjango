@@ -1,10 +1,11 @@
 {% extends 'simulador/base.html' %}
+{% load formato_br %}
 {% block title %}Resumo da Simulação - Simulador{% endblock %}
 
 {% block content_class %}resumo-page{% endblock %}
 
 {% block content %}
-<div class="container bg-light text-dark p-3 rounded shadow" style="margin-top: 80px;">
+<div class="container bg-light text-dark p-3 rounded shadow" style="margin-top: 5px;">
 
   <div class="border-bottom pb-2 mb-3">
     <h5 class="mb-0">Resumo da Simulação</h5>
@@ -61,12 +62,12 @@
         </div>
         <div class="collapse" id="collapse-ficha">
           <div class="card-body">
-            <p><strong>Dimensões Cabine:</strong> {{ dimensionamento.cab.largura|floatformat:2 }}m L x 
-               {{ dimensionamento.cab.compr|floatformat:2 }}m C x 
-               {{ dimensionamento.cab.altura|floatformat:2 }}m A</p>
+            <p><strong>Dimensões Cabine:</strong> {{ dimensionamento.cab.largura|formato_br }}m L x 
+               {{ dimensionamento.cab.compr|formato_br }}m C x 
+               {{ dimensionamento.cab.altura|formato_br }}m A</p>
             <p><strong>Capacidade e Tração Cabine:</strong> 
-               {{ dimensionamento.cab.capacidade|floatformat:2 }} kg, 
-               {{ dimensionamento.cab.tracao|floatformat:2 }} kg</p>
+               {{ dimensionamento.cab.capacidade|formato_br }} kg, 
+               {{ dimensionamento.cab.tracao|formato_br }} kg</p>
           </div>
         </div>
       </div>
@@ -79,7 +80,7 @@
         </div>
         <div class="collapse" id="collapse-dimensionamento">
           <div class="card-body dimensionamento-highlights">
-            {{ explicacao|linebreaks }}
+            {{ explicacao|safe }}
           </div>
         </div>
       </div>
@@ -99,16 +100,18 @@
                   {% for item in itens %}
                     <li>
                       <strong>{{ item.descricao }}</strong> ({{ item.codigo }}) - 
-                      {{ item.quantidade|floatformat:2 }} {{ item.unidade }},
-                      Custo: R$ {{ item.custo_total|floatformat:2 }}
+                      {{ item.quantidade|formato_br }} {{ item.unidade }},
+                      Custo: R$ {{ item.custo_total|formato_br }}
                     </li>
                   {% endfor %}
                 </ul>
               {% endfor %}
             {% endfor %}
-            
-            <div class="alert alert-secondary">
-              <h5 class="mb-0">Custo Total: R$ {{ custo_total|floatformat:2 }}</h5>
+            <div class="alert alert-success">
+              <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Custo estimado:</h4>
+                <h3 class="mb-0">R$ {{ custo_total|formato_br }}</h3>
+              </div>
             </div>
           </div>
         </div>
@@ -118,7 +121,7 @@
       <div class="alert alert-success">
         <div class="d-flex justify-content-between align-items-center">
           <h4 class="mb-0">Custo estimado:</h4>
-          <h3 class="mb-0">R$ {{ custo_total|floatformat:2 }}</h3>
+          <h3 class="mb-0">R$ {{ custo_total|formato_br }}</h3>
         </div>
       </div>
       
@@ -187,13 +190,16 @@
     if (dimensionamentoDiv) {
       let content = dimensionamentoDiv.innerHTML;
       
-      // Substituir números por números formatados com destaque
+      // Substituir números por números formatados com destaque no padrão brasileiro
       content = content.replace(/(\d+\.\d+|\d+)/g, function(match) {
         // Verifica se é um número com casa decimal
         if (match.includes('.')) {
           const num = parseFloat(match);
-          return '<span class="highlight-value">' + num.toFixed(2) + '</span>';
+          // Formatar para padrão brasileiro (com vírgula como decimal e ponto como separador de milhar)
+          const numFormatado = num.toFixed(2).replace('.', ',');
+          return '<span class="highlight-value">' + numFormatado + '</span>';
         }
+        // Para números inteiros, apenas adicionar o destaque
         return '<span class="highlight-value">' + match + '</span>';
       });
       
