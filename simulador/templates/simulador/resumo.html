@@ -62,12 +62,16 @@
         </div>
         <div class="collapse" id="collapse-ficha">
           <div class="card-body">
-            <p><strong>Dimensões Cabine:</strong> {{ dimensionamento.cab.largura|formato_br }}m L x 
-               {{ dimensionamento.cab.compr|formato_br }}m C x 
-               {{ dimensionamento.cab.altura|formato_br }}m A</p>
-            <p><strong>Capacidade e Tração Cabine:</strong> 
-               {{ dimensionamento.cab.capacidade|formato_br }} kg, 
-               {{ dimensionamento.cab.tracao|formato_br }} kg</p>
+            {% if dimensionamento.cab %}
+              <p><strong>Dimensões Cabine:</strong> {{ dimensionamento.cab.largura|formato_br }}m L x 
+                {{ dimensionamento.cab.compr|formato_br }}m C x 
+                {{ dimensionamento.cab.altura|formato_br }}m A</p>
+              <p><strong>Capacidade e Tração Cabine:</strong> 
+                {{ dimensionamento.cab.capacidade|formato_br }} kg, 
+                {{ dimensionamento.cab.tracao|formato_br }} kg</p>
+            {% else %}
+              <p class="text-danger">Dados de dimensionamento não disponíveis.</p>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -80,7 +84,11 @@
         </div>
         <div class="collapse" id="collapse-dimensionamento">
           <div class="card-body dimensionamento-highlights">
-            {{ explicacao|safe }}
+            {% if explicacao %}
+              {{ explicacao|linebreaks|safe }}
+            {% else %}
+              <p class="text-danger">Explicação de dimensionamento não disponível.</p>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -92,27 +100,31 @@
         </div>
         <div class="collapse" id="collapse-componentes">
           <div class="card-body">
-            {% for grupo_nome, subgrupos in grupos.items %}
-              <h6 class="border-bottom pb-1 mb-2">{{ grupo_nome }}</h6>
-              {% for subgrupo_nome, itens in subgrupos.items %}
-                <p class="mb-1"><strong>{{ subgrupo_nome }}</strong></p>
-                <ul class="mb-3">
-                  {% for item in itens %}
-                    <li>
-                      <strong>{{ item.descricao }}</strong> ({{ item.codigo }}) - 
-                      {{ item.quantidade|formato_br }} {{ item.unidade }},
-                      Custo: R$ {{ item.custo_total|formato_br }}
-                    </li>
-                  {% endfor %}
-                </ul>
+            {% if grupos %}
+              {% for grupo_nome, subgrupos in grupos.items %}
+                <h6 class="border-bottom pb-1 mb-2">{{ grupo_nome }}</h6>
+                {% for subgrupo_nome, itens in subgrupos.items %}
+                  <p class="mb-1"><strong>{{ subgrupo_nome }}</strong></p>
+                  <ul class="mb-3">
+                    {% for item in itens %}
+                      <li>
+                        <strong>{{ item.descricao }}</strong> ({{ item.codigo }}) - 
+                        {{ item.quantidade|formato_br }} {{ item.unidade }},
+                        Custo: R$ {{ item.custo_total|formato_br }}
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% endfor %}
               {% endfor %}
-            {% endfor %}
-            <div class="alert alert-success">
-              <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">Custo estimado:</h4>
-                <h3 class="mb-0">R$ {{ custo_total|formato_br }}</h3>
+              <div class="alert alert-success">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h4 class="mb-0">Custo estimado:</h4>
+                  <h3 class="mb-0">R$ {{ custo_total|formato_br }}</h3>
+                </div>
               </div>
-            </div>
+            {% else %}
+              <p class="text-danger">Dados de componentes não disponíveis.</p>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -185,22 +197,30 @@
       });
     });
     
-    // Adiciona formatação aos valores numéricos no explicação de dimensionamento
+    // Formata e destaca os valores numéricos na explicação de dimensionamento
     const dimensionamentoDiv = document.querySelector('.dimensionamento-highlights');
     if (dimensionamentoDiv) {
       let content = dimensionamentoDiv.innerHTML;
       
-      // Substituir números por números formatados com destaque no padrão brasileiro
-      content = content.replace(/(\d+\.\d+|\d+)/g, function(match) {
-        // Verifica se é um número com casa decimal
-        if (match.includes('.')) {
-          const num = parseFloat(match);
-          // Formatar para padrão brasileiro (com vírgula como decimal e ponto como separador de milhar)
-          const numFormatado = num.toFixed(2).replace('.', ',');
-          return '<span class="highlight-value">' + numFormatado + '</span>';
+      // Substitui números por números formatados com destaque no padrão brasileiro
+      content = content.replace(/(\d+\.\d+|\d+(?!\d))/g, function(match) {
+        if (!match.trim()) return match;
+        
+        try {
+          // Verifica se é um número com casa decimal
+          if (match.includes('.')) {
+            const num = parseFloat(match);
+            if (isNaN(num)) return match;
+            
+            // Formatar para padrão brasileiro (com vírgula como decimal e ponto como separador de milhar)
+            const numFormatado = num.toFixed(2).replace('.', ',');
+            return '<span class="highlight-value">' + numFormatado + '</span>';
+          }
+          // Para números inteiros, apenas adicionar o destaque
+          return '<span class="highlight-value">' + match + '</span>';
+        } catch (e) {
+          return match;
         }
-        // Para números inteiros, apenas adicionar o destaque
-        return '<span class="highlight-value">' + match + '</span>';
       });
       
       dimensionamentoDiv.innerHTML = content;

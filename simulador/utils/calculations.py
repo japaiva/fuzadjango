@@ -69,37 +69,73 @@ def calcular_dimensionamento_completo(respostas: dict):
     # Calcular chapas
     chapas_info = calcular_chapas_cabine(altura, largura, comprimento)
     
-    # Formatar os números no padrão brasileiro
-    def formato_br(valor):
-        """Formata um número para o padrão brasileiro (1.234,56)"""
+    # Função para formatação segura
+    def formato_seguro(valor, decimais=2):
+        """Formata um número com segurança, tratando possíveis erros"""
         try:
-            # Verificar se é um número
             numero = float(valor)
-            # Formatar com vírgula como decimal e ponto como separador de milhar
-            valor_formatado = f"{numero:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
-            return f'<span class="highlight-value">{valor_formatado}</span>'
+            return round(numero, decimais)
         except (ValueError, TypeError):
-            # Se não for um número, retorna o valor original
-            return valor
+            return 0
     
-    # Gerar explicações detalhadas usando HTML corretamente
-    explicacoes = f"""
-    <strong>Dimensões Cabine:</strong> Largura: Poço = {formato_br(largura_poco)}m - ({formato_br(sub_largura)}m)
-    {' -Contrapeso lateral (0,23m),' if contrapeso == 'Lateral' else ''} = {formato_br(largura)}m; 
-    Comprimento: Poço = {formato_br(comprimento_poco)}m - (0,10m) - Ajuste de porta {modelo_porta} {f'({folhas_porta} folhas)' if folhas_porta else ''} {'(x2 pois saída é oposta)' if saida == 'Oposta' else ''} ({formato_br(ajuste_porta)}m)
-    {' - Contrapeso traseiro (0,23m)' if contrapeso == 'Traseiro' else ''} = {formato_br(comprimento)}m; Altura: Informada pelo usuário = {formato_br(altura)}m
-    """
-    explicacoes += f"\n<strong>Capacidade e Tração Cabine</strong>: {'pessoas' if 'Passageiro' in modelo else 'kg'} {formato_br(capacidade_original)} {'* 80 kg' if 'Passageiro' in modelo else ''} = {formato_br(capacidade_cabine)} kg; (Capacidade Cabine / 2) + 500 = {formato_br(tracao_cabine)} kg.\n"
+    # Função para formatar texto com negrito de forma compatível
+    def formato_negrito(texto):
+        """Formata texto com negrito de maneira compatível com PDF e HTML"""
+        return f"<strong>{texto}</strong>"
     
+    # Gerar explicações detalhadas de modo compatível tanto com HTML quanto PDF
+    explicacoes = []
+    
+    # Dimensões da cabine
+    explicacoes.append(f"{formato_negrito('Dimensões Cabine:')}")
+    explicacoes.append(f"Largura: Poço = {formato_seguro(largura_poco)}m - ({formato_seguro(sub_largura)}m)"
+                      f"{' -Contrapeso lateral (0,23m),' if contrapeso == 'Lateral' else ''} = {formato_seguro(largura)}m")
+    
+    explicacoes.append(f"Comprimento: Poço = {formato_seguro(comprimento_poco)}m - (0,10m) - "
+                      f"Ajuste de porta {modelo_porta} {f'({folhas_porta} folhas)' if folhas_porta else ''} "
+                      f"{'(x2 pois saída é oposta)' if saida == 'Oposta' else ''} ({formato_seguro(ajuste_porta)}m)"
+                      f"{' - Contrapeso traseiro (0,23m)' if contrapeso == 'Traseiro' else ''} = {formato_seguro(comprimento)}m")
+    
+    explicacoes.append(f"Altura: Informada pelo usuário = {formato_seguro(altura)}m")
+    
+    # Capacidade e tração
+    explicacoes.append(f"{formato_negrito('Capacidade e Tração Cabine:')}")
+    explicacoes.append(f"{'pessoas' if 'Passageiro' in modelo else 'kg'} {formato_seguro(capacidade_original)} "
+                      f"{'* 80 kg' if 'Passageiro' in modelo else ''} = {formato_seguro(capacidade_cabine)} kg")
+    explicacoes.append(f"(Capacidade Cabine / 2) + 500 = {formato_seguro(tracao_cabine)} kg")
+    
+    # Informações sobre painéis e chapas
     if isinstance(chapas_info, dict):
-        # Aqui está a correção principal - garantir que as tags <strong> estejam corretamente fechadas
-        explicacoes += f"\n<strong>Painéis Corpo Cabine</strong>: Laterais: {chapas_info['num_paineis_lateral']} de {formato_br(chapas_info['largura_painel_lateral']*100)}cm (com dobras {formato_br((chapas_info['largura_painel_lateral']+0.085)*100)}cm), {formato_br(chapas_info['altura_painel_lateral'])}m altura; Fundo: {chapas_info['num_paineis_fundo']} de {formato_br(chapas_info['largura_painel_fundo']*100)}cm (com dobras {formato_br((chapas_info['largura_painel_fundo']+0.085)*100)}cm), {formato_br(chapas_info['altura_painel_fundo'])}m altura; Teto: {chapas_info['num_paineis_teto']} de {formato_br(chapas_info['largura_painel_teto']*100)}cm (com dobras {formato_br((chapas_info['largura_painel_teto']+0.085)*100)}cm), {formato_br(chapas_info['altura_painel_teto'])}m altura."
+        explicacoes.append(f"{formato_negrito('Painéis Corpo Cabine:')}")
+        explicacoes.append(f"Laterais: {chapas_info['num_paineis_lateral']} de "
+                          f"{formato_seguro(chapas_info['largura_painel_lateral']*100)}cm "
+                          f"(com dobras {formato_seguro((chapas_info['largura_painel_lateral']+0.085)*100)}cm), "
+                          f"{formato_seguro(chapas_info['altura_painel_lateral'])}m altura")
         
-        explicacoes += f"\n<strong>Chapas Corpo Cabine</strong>: Laterais e Teto: {chapas_info['num_chapalt']} chapas, sobra/chapa = {formato_br(chapas_info['sobra_chapalt']*100)} cm, Fundo: {chapas_info['num_chapaf']} chapas, sobra/chapa = {formato_br(chapas_info['sobra_chapaf']*100)} cm, Reserva: 2 chapas. Total: {chapas_info['num_chapatot']} chapas."
+        explicacoes.append(f"Fundo: {chapas_info['num_paineis_fundo']} de "
+                          f"{formato_seguro(chapas_info['largura_painel_fundo']*100)}cm "
+                          f"(com dobras {formato_seguro((chapas_info['largura_painel_fundo']+0.085)*100)}cm), "
+                          f"{formato_seguro(chapas_info['altura_painel_fundo'])}m altura")
         
-        explicacoes += f"\n<strong>Chapas Piso Cabine</strong>:{chapas_info['num_chapa_piso']} chapa(s)."
+        explicacoes.append(f"Teto: {chapas_info['num_paineis_teto']} de "
+                          f"{formato_seguro(chapas_info['largura_painel_teto']*100)}cm "
+                          f"(com dobras {formato_seguro((chapas_info['largura_painel_teto']+0.085)*100)}cm), "
+                          f"{formato_seguro(chapas_info['altura_painel_teto'])}m altura")
+        
+        explicacoes.append(f"{formato_negrito('Chapas Corpo Cabine:')}")
+        explicacoes.append(f"Laterais e Teto: {chapas_info['num_chapalt']} chapas, "
+                          f"sobra/chapa = {formato_seguro(chapas_info['sobra_chapalt']*100)} cm")
+        explicacoes.append(f"Fundo: {chapas_info['num_chapaf']} chapas, "
+                          f"sobra/chapa = {formato_seguro(chapas_info['sobra_chapaf']*100)} cm")
+        explicacoes.append(f"Reserva: 2 chapas. Total: {chapas_info['num_chapatot']} chapas")
+        
+        explicacoes.append(f"{formato_negrito('Chapas Piso Cabine:')}")
+        explicacoes.append(f"{chapas_info['num_chapa_piso']} chapa(s)")
     else:
-        explicacoes += f"\nErro no cálculo de chapas: {chapas_info}"
+        explicacoes.append(f"Erro no cálculo de chapas: {chapas_info}")
+    
+    # Junta tudo em uma string (com quebras de linha)
+    explicacao_texto = "\n".join(explicacoes)
     
     # Montar o resultado
     dimensionamento = {
@@ -121,7 +157,7 @@ def calcular_dimensionamento_completo(respostas: dict):
         }
     }
     
-    return dimensionamento, explicacoes
+    return dimensionamento, explicacao_texto
 
 def calcular_componentes(dimensionamento, respostas):
     componentes = {}
