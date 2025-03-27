@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.contrib.auth import logout
 from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .utils.calculations import calcular_dimensionamento_completo, calcular_componentes
+from .utils.calculations import calcular_dimensionamento_completo, calcular_componentes, calcular_formacao_preco
 from .utils.utils import agrupar_respostas_por_pagina
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
 
 from .models import Usuario, Custo, Parametro
 from .forms import UsuarioForm, CustoForm, ParametroForm
@@ -265,6 +269,17 @@ def resumo(request):
     # Calcular componentes
     componentes, custos, custo_total, todos_custos = calcular_componentes(dimensionamento, respostas)
     
+    # Calcular formação de preço
+    # Obtenha o valor de faturamento do cliente - não normaliza para preservar a formatação original
+    faturado_por = respostas.get('Faturado por', 'Elevadores')
+    
+    # Verifica se o valor está em um dos tipos esperados, preservando a caixa original
+    if faturado_por not in ['Elevadores', 'Fuza', 'Manutenção']:
+        faturado_por = 'Elevadores'  # valor padrão
+        
+    # IMPORTANTE: Passa o valor exatamente como está, sem converter para minúsculas
+    formacao_preco = calcular_formacao_preco(custo_total, tipo_faturamento=faturado_por)
+    
     # Agrupar respostas por página para exibição
     respostas_agrupadas = agrupar_respostas_por_pagina(respostas)
     
@@ -287,10 +302,57 @@ def resumo(request):
         'componentes': componentes,
         'grupos': grupos,
         'custo_total': custo_total,
+        'formacao_preco': formacao_preco,
         'user_level': request.user.nivel if hasattr(request.user, 'nivel') else None,
     }
     
     return render(request, 'simulador/resumo.html', context)
+
+@login_required
+@require_POST
+def atualizar_preco_final(request):
+    """
+    Endpoint para atualizar o preço final e retornar a formação de preço recalculada
+    """
+    try:
+        # Verifica se a requisição é AJAX (alternativa ao is_ajax() que foi depreciado)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            preco_final = float(request.POST.get('preco_final', 0))
+            custo_total = float(request.POST.get('custo_total', 0))
+            
+            # Obtém o tipo de faturamento da sessão
+            respostas = request.session.get("respostas", {})
+            faturado_por = respostas.get('Faturado por', 'Elevadores')
+            
+            # Importa as funções de calculations.py
+            from .utils.calculations import calcular_formacao_preco, recalcular_com_desconto
+            
+            # Usa o tipo de faturamento correto ao calcular
+            formacao_preco = calcular_formacao_preco(custo_total, tipo_faturamento=faturado_por)
+            formacao_preco_atualizada = recalcular_com_desconto(formacao_preco, preco_final)
+            
+            # Formatar valores para retorno
+            for key in formacao_preco_atualizada:
+                if isinstance(formacao_preco_atualizada[key], (int, float)):
+                    if key.startswith('percentual_'):
+                        formacao_preco_atualizada[key] = f"{formacao_preco_atualizada[key]:.1f}"
+                    else:
+                        formacao_preco_atualizada[key] = f"{formacao_preco_atualizada[key]:.2f}"
+            
+            return JsonResponse({
+                'success': True,
+                'formacao_preco': formacao_preco_atualizada
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'Requisição não é AJAX'
+            })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
 
 @login_required
 def reiniciar_simulacao(request):
@@ -546,6 +608,7 @@ def parametro_delete(request, pk):
         return redirect('simulador:parametro_list')
     return render(request, 'simulador/parametro_confirm_delete.html', {'parametro': parametro})
 
+
 @login_required
 def gerar_pdf(request):
     """
@@ -593,7 +656,7 @@ def gerar_pdf(request):
     # Enviar o PDF como resposta
     from django.http import HttpResponse
     response = HttpResponse(pdf_bytes, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="relatorio_calculo.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="demonstrativo custo.pdf"'
     return response
 
 @login_required

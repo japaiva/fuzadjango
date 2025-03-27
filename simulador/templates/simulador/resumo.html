@@ -55,6 +55,7 @@
     <div class="col-md-6">
       <h6 class="border-bottom pb-1 mb-3">Cálculos</h6>
       
+      <!-- Ficha Técnica - Todos podem ver -->
       <div class="card mb-3 card-collapsible">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center collapse-header" data-bs-toggle="collapse" data-bs-target="#collapse-ficha" aria-expanded="false">
           Ficha Técnica
@@ -76,26 +77,31 @@
         </div>
       </div>
       
-      {% if user_level != 'vendedor' %}
+      <!-- Dimensionamento - Somente engenharia e admin -->
+      {% if user_level in 'engenharia,admin' %}
       <div class="card mb-3 card-collapsible">
         <div class="card-header bg-info text-white d-flex justify-content-between align-items-center collapse-header" data-bs-toggle="collapse" data-bs-target="#collapse-dimensionamento" aria-expanded="false">
-          Cálculo Dimensionamento
+          Dimensionamento
           <i class="fas fa-chevron-down collapse-icon"></i>
         </div>
         <div class="collapse" id="collapse-dimensionamento">
           <div class="card-body dimensionamento-highlights">
             {% if explicacao %}
-              {{ explicacao|linebreaks|safe }}
+              <div id="explicacaoFormatada"></div>
+              <div id="explicacaoOriginal" style="display: none;">{{ explicacao }}</div>
             {% else %}
               <p class="text-danger">Explicação de dimensionamento não disponível.</p>
             {% endif %}
           </div>
         </div>
       </div>
+      {% endif %}
       
+      <!-- Custo Produção - Somente engenharia e admin -->
+      {% if user_level in 'engenharia,admin' %}
       <div class="card mb-3 card-collapsible">
         <div class="card-header bg-info text-white d-flex justify-content-between align-items-center collapse-header" data-bs-toggle="collapse" data-bs-target="#collapse-componentes" aria-expanded="false">
-          Componentes
+          Custo Produção
           <i class="fas fa-chevron-down collapse-icon"></i>
         </div>
         <div class="collapse" id="collapse-componentes">
@@ -116,10 +122,10 @@
                   </ul>
                 {% endfor %}
               {% endfor %}
-              <div class="alert alert-success">
+              <div class="alert alert-info">
                 <div class="d-flex justify-content-between align-items-center">
-                  <h4 class="mb-0">Custo estimado:</h4>
-                  <h3 class="mb-0">R$ {{ custo_total|formato_br }}</h3>
+                  <h4 class="mb-0">Custo produção:</h4>
+                  <h3 class="mb-0">R$ <span id="custo-producao">{{ custo_total|formato_br }}</span></h3>
                 </div>
               </div>
             {% else %}
@@ -129,30 +135,117 @@
         </div>
       </div>
       {% endif %}
-      
-      <div class="alert alert-success">
-        <div class="d-flex justify-content-between align-items-center">
-          <h4 class="mb-0">Custo estimado:</h4>
-          <h3 class="mb-0">R$ {{ custo_total|formato_br }}</h3>
+
+      <!-- Formação Preço - Somente admin -->
+      {% if user_level == 'admin' %}
+      <div class="card mb-3 card-collapsible">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center collapse-header" data-bs-toggle="collapse" data-bs-target="#collapse-formacao-preco" aria-expanded="false">
+          Formação Preço
+          <i class="fas fa-chevron-down collapse-icon"></i>
         </div>
-      </div>
-      
-      {% if user_level != 'vendedor' %}
-      <div class="row mt-3">
-        <div class="col-md-6">
-          <form method="post" action="{% url 'simulador:gerar_pdf' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary w-100">Gerar PDF</button>
-          </form>
-        </div>
-        <div class="col-md-6">
-          <form method="post" action="{% url 'simulador:proposta_comercial' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-success w-100">Gerar Proposta Comercial</button>
-          </form>
+        <div class="collapse" id="collapse-formacao-preco">
+          <div class="card-body">
+            <div class="mb-3">
+              <!-- Tabela para formatação alinhada -->
+              <table class="table table-borderless">
+                <tbody>
+                  <tr>
+                    <td class="text-start fw-bold">Custo de produção</td>
+                    <td class="text-end fw-bold">R$ <span id="valor-custo-producao">{{ formacao_preco.custo_producao|formato_br }}</span></td>
+                  </tr>
+                  
+                  <tr>
+                    <td class="text-start">Margem ({{ formacao_preco.percentual_margem|floatformat:1 }}%)</td>
+                    <td class="text-end">R$ <span id="valor-margem">{{ formacao_preco.valor_margem|formato_br }}</span></td>
+                  </tr>
+                  
+                  <tr>
+                    <td class="text-start">Desconto (<span id="percentual-desconto-interno">{{ formacao_preco.percentual_desconto|floatformat:1 }}</span>%)</td>
+                    <td class="text-end">-R$ <span id="valor-desconto-interno">{{ formacao_preco.valor_desconto|formato_br }}</span></td>
+                  </tr>
+                  
+                  <tr>
+                    <td class="text-start fw-bold">Base Cálculo Comissão</td>
+                    <td class="text-end fw-bold">R$ <span id="base-calculo-comissao">{{ formacao_preco.base_calculo_comissao|formato_br }}</span></td>
+                  </tr>
+                  
+                  <tr>
+                    <td class="text-start">Comissão ({{ formacao_preco.percentual_comissao|floatformat:1 }}%)</td>
+                    <td class="text-end">R$ <span id="valor-comissao">{{ formacao_preco.valor_comissao|formato_br }}</span></td>
+                  </tr>
+                  
+                  <tr class="bg-light">
+                    <td class="text-start fw-bold">Preço sem impostos</td>
+                    <td class="text-end fw-bold">R$ <span id="valor-preco-sem-impostos">{{ formacao_preco.preco_sem_impostos|formato_br }}</span></td>
+                  </tr>
+                  
+                  <tr>
+                    <td class="text-start">Impostos ({{ formacao_preco.percentual_impostos|floatformat:1 }}%)</td>
+                    <td class="text-end">R$ <span id="valor-impostos">{{ formacao_preco.valor_impostos|formato_br }}</span></td>
+                  </tr>
+                  
+                  <tr class="bg-light">
+                    <td class="text-start fw-bold">Preço com impostos</td>
+                    <td class="text-end fw-bold">R$ <span id="valor-preco-com-impostos">{{ formacao_preco.preco_com_impostos|formato_br }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
       {% endif %}
+      
+      <!-- Preço calculado, preço final e desconto em linha única compacta -->
+      <div class="alert alert-warning py-1 mb-3">
+        <div class="row align-items-center">
+          <div class="col-md-2">
+            <small class="mb-0 text-start">Preço S/Impostos</small>
+          </div>
+          <div class="col-md-3 text-center">
+            <span class="fw-bold">R$ <span id="preco-calculado">{{ formacao_preco.preco_sem_impostos|formato_br }}</span></span>
+          </div>
+          <div class="col-md-4 text-center">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text">R$</span>
+              <input type="text" class="form-control text-end" id="preco-final" value="{{ formacao_preco.preco_sem_impostos|formato_br }}">
+            </div>
+          </div>
+          <div class="col-md-3 text-center">
+            <span class="small me-1">Desconto</span>
+            <span class="fw-bold"><span id="percentual-desconto">0</span>%</span>
+            <div class="d-none">
+              <span id="valor-desconto">0,00</span>
+            </div>
+          </div>
+        </div>
+        <div id="alerta-desconto" class="mt-1" style="display: none;">
+          <div class="alert alert-danger py-1 mb-0">
+            <small><i class="fas fa-exclamation-triangle"></i> Desconto acima de {{ formacao_preco.alcada_desconto|floatformat:1 }}%</small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Botões para geração de PDFs -->
+      <div class="row mt-3">
+        <!-- Demonstrativo Custo - Somente engenharia e admin -->
+        {% if user_level in 'engenharia,admin' %}
+        <div class="col-md-6">
+          <form method="post" action="{% url 'simulador:gerar_pdf' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary w-100">Demonstrativo Custo</button>
+          </form>
+        </div>
+        {% endif %}
+        
+        <!-- Orçamento Venda - Todos podem ver -->
+        <div class="col-md-{% if user_level in 'engenharia,admin' %}6{% else %}12{% endif %}">
+          <form method="post" action="{% url 'simulador:proposta_comercial' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success w-100">Orçamento Venda</button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
   
@@ -171,61 +264,167 @@
 
 {% block extra_js %}
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Adiciona event listeners para todos os cabeçalhos colapsáveis
-    const collapseHeaders = document.querySelectorAll('.collapse-header');
-    
-    collapseHeaders.forEach(header => {
-      header.addEventListener('click', function() {
-        const target = this.getAttribute('data-bs-target');
-        const collapseElement = document.querySelector(target);
-        const icon = this.querySelector('.collapse-icon');
-        
-        // Toggle da classe 'show' no elemento colapsável
-        collapseElement.classList.toggle('show');
-        
-        // Rotaciona o ícone
-        if (collapseElement.classList.contains('show')) {
-          icon.classList.remove('fa-chevron-down');
-          icon.classList.add('fa-chevron-up');
-          this.setAttribute('aria-expanded', 'true');
-        } else {
-          icon.classList.remove('fa-chevron-up');
-          icon.classList.add('fa-chevron-down');
-          this.setAttribute('aria-expanded', 'false');
-        }
-      });
-    });
-    
-    // Formata e destaca os valores numéricos na explicação de dimensionamento
-    const dimensionamentoDiv = document.querySelector('.dimensionamento-highlights');
-    if (dimensionamentoDiv) {
-      let content = dimensionamentoDiv.innerHTML;
+    document.addEventListener('DOMContentLoaded', function() {
+      // Código para formatar explicação
+      const explicacaoOriginal = document.getElementById('explicacaoOriginal');
+      const explicacaoFormatada = document.getElementById('explicacaoFormatada');
       
-      // Substitui números por números formatados com destaque no padrão brasileiro
-      content = content.replace(/(\d+\.\d+|\d+(?!\d))/g, function(match) {
-        if (!match.trim()) return match;
+      if (explicacaoOriginal && explicacaoFormatada) {
+        // Obter o texto original
+        const textoOriginal = explicacaoOriginal.textContent;
         
-        try {
-          // Verifica se é um número com casa decimal
-          if (match.includes('.')) {
-            const num = parseFloat(match);
-            if (isNaN(num)) return match;
+        // Quebrar o texto em linhas usando \n como separador
+        const linhas = textoOriginal.split('\n');
+        
+        // Para cada linha, criar um elemento de parágrafo
+        linhas.forEach(linha => {
+          if (linha.trim() !== '') {
+            const paragrafo = document.createElement('p');
             
-            // Formatar para padrão brasileiro (com vírgula como decimal e ponto como separador de milhar)
-            const numFormatado = num.toFixed(2).replace('.', ',');
-            return '<span class="highlight-value">' + numFormatado + '</span>';
+            // Formatar números e preservar tags HTML
+            let conteudoLinha = linha;
+            
+            // Preservar tags <strong>
+            conteudoLinha = conteudoLinha.replace(/&lt;strong&gt;/g, '<strong>');
+            conteudoLinha = conteudoLinha.replace(/&lt;\/strong&gt;/g, '</strong>');
+            
+            // Formatar números para o padrão brasileiro
+            conteudoLinha = conteudoLinha.replace(/(\d+\.\d+)/g, function(match) {
+              const num = parseFloat(match);
+              if (isNaN(num)) return match;
+              
+              // Usar span para destaque
+              const numFormatado = num.toFixed(2).replace('.', ',');
+              return '<span class="highlight-value">' + numFormatado + '</span>';
+            });
+            
+            paragrafo.innerHTML = conteudoLinha;
+            explicacaoFormatada.appendChild(paragrafo);
           }
-          // Para números inteiros, apenas adicionar o destaque
-          return '<span class="highlight-value">' + match + '</span>';
-        } catch (e) {
-          return match;
-        }
+        });
+      }
+    
+      // Código para os cabeçalhos colapsáveis
+      const collapseHeaders = document.querySelectorAll('.collapse-header');
+      
+      collapseHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+          const target = this.getAttribute('data-bs-target');
+          const collapseElement = document.querySelector(target);
+          const icon = this.querySelector('.collapse-icon');
+          
+          // Toggle da classe 'show' no elemento colapsável
+          collapseElement.classList.toggle('show');
+          
+          // Rotaciona o ícone
+          if (collapseElement.classList.contains('show')) {
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+            this.setAttribute('aria-expanded', 'true');
+          } else {
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+            this.setAttribute('aria-expanded', 'false');
+          }
+        });
       });
       
-      dimensionamentoDiv.innerHTML = content;
-    }
-  });
+      // Formata valor no padrão brasileiro
+      function formatarValorBR(valor) {
+        return valor.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
+      
+      // Elementos DOM para a formação de preço
+      const custoProdElem = document.getElementById('valor-custo-producao');
+      const precoCalculadoElem = document.getElementById('preco-calculado');
+      const precoFinalInput = document.getElementById('preco-final');
+      
+      // Verificar se os elementos existem (dependendo do nível do usuário)
+      if (precoFinalInput) {
+        const percentualDescontoElem = document.getElementById('percentual-desconto');
+        const valorDescontoElem = document.getElementById('valor-desconto');
+        const valorImpostosElem = document.getElementById('valor-impostos');
+        const valorMargemElem = document.getElementById('valor-margem');
+        const valorComissaoElem = document.getElementById('valor-comissao');
+        const baseCalculoComissaoElem = document.getElementById('base-calculo-comissao');
+        const percentualDescontoInternoElem = document.getElementById('percentual-desconto-interno');
+        const valorDescontoInternoElem = document.getElementById('valor-desconto-interno');
+        const valorPrecoSemImpostosElem = document.getElementById('valor-preco-sem-impostos');
+        const valorPrecoComImpostosElem = document.getElementById('valor-preco-com-impostos');
+
+        // Valor da alçada de desconto
+        const alcadaDesconto = {{ formacao_preco.alcada_desconto|default:5.0 }};
+
+        // Percentuais para cálculos
+        const percentualImpostos = {{ formacao_preco.percentual_impostos|floatformat:4 }} / 100;
+        const percentualMargem = {{ formacao_preco.percentual_margem|floatformat:4 }} / 100;
+        const percentualComissao = {{ formacao_preco.percentual_comissao|floatformat:4 }} / 100;
+
+        // Obtém os valores iniciais (removendo a formatação)
+        const getNumber = text => parseFloat(text.replace(/\./g, '').replace(',', '.'));
+        const custoProducao = getNumber(custoProdElem.textContent);
+        const precoSemImpostos = getNumber(precoCalculadoElem.textContent);
+        const valorMargem = getNumber(valorMargemElem.textContent);
+        const valorComissaoInicial = getNumber(valorComissaoElem.textContent);
+        
+        // Atualiza o desconto quando o preço final é alterado
+        precoFinalInput.addEventListener('input', function() {
+          // Remove formatação para fazer o cálculo
+          const valorDigitado = this.value.replace(/\./g, '').replace(/,/g, '.');
+          const precoFinalSemImpostos = parseFloat(valorDigitado);
+          
+          if (!isNaN(precoFinalSemImpostos)) {
+            // Valores originais sem desconto
+            const precoOriginalSemDesconto = custoProducao + valorMargem + valorComissaoInicial;
+            
+            // Calcula o desconto
+            const valorDesconto = precoOriginalSemDesconto - precoFinalSemImpostos;
+            const percentualDesconto = (valorDesconto / precoOriginalSemDesconto) * 100;
+            
+            // Atualiza os elementos na interface
+            valorDescontoElem.textContent = formatarValorBR(valorDesconto);
+            percentualDescontoElem.textContent = percentualDesconto.toFixed(1);
+            
+            // Calcular nova base para comissão (preço solicitado dividido por 1 + percentual de comissão)
+            const baseComissao = precoFinalSemImpostos / (1 + percentualComissao);
+            const valorComissao = baseComissao * percentualComissao;
+            
+            // Calcular impostos
+            const valorImpostos = precoFinalSemImpostos * percentualImpostos;
+            const precoComImpostos = precoFinalSemImpostos + valorImpostos;
+            
+            // Atualizar valores na interface
+            valorDescontoInternoElem.textContent = formatarValorBR(valorDesconto);
+            valorPrecoSemImpostosElem.textContent = formatarValorBR(precoFinalSemImpostos);
+            percentualDescontoInternoElem.textContent = percentualDesconto.toFixed(1);
+            baseCalculoComissaoElem.textContent = formatarValorBR(baseComissao);
+            valorComissaoElem.textContent = formatarValorBR(valorComissao);
+            valorImpostosElem.textContent = formatarValorBR(valorImpostos);
+            valorPrecoComImpostosElem.textContent = formatarValorBR(precoComImpostos);
+            
+            // Verificar se o desconto excede a alçada permitida
+            const alertaDesconto = document.getElementById('alerta-desconto');
+            if (percentualDesconto > alcadaDesconto && precoFinalSemImpostos < precoSemImpostos) {
+              alertaDesconto.style.display = 'block';
+              this.classList.add('border-danger');
+            } else {
+              alertaDesconto.style.display = 'none';
+              this.classList.remove('border-danger');
+            }
+          }
+        });
+        
+        // Formata o valor quando o campo perde o foco
+        precoFinalInput.addEventListener('blur', function() {
+          const valorDigitado = this.value.replace(/\./g, '').replace(/,/g, '.');
+          const precoFinal = parseFloat(valorDigitado);
+          
+          if (!isNaN(precoFinal)) {
+            this.value = formatarValorBR(precoFinal);
+          }
+        });
+      }
+    });
 </script>
 {% endblock %}
 {% endblock %}

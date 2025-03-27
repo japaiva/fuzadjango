@@ -13,6 +13,8 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'), 
     path('reiniciar/', views.reiniciar_simulacao, name='reiniciar_simulacao'),
 
+    path('atualizar-preco-final/', views.atualizar_preco_final, name='atualizar_preco_final'),
+
     # Novas URLs para PDFs
     path('gerar-pdf/', views.gerar_pdf, name='gerar_pdf'),
     path('proposta-comercial/', views.proposta_comercial, name='proposta_comercial'),

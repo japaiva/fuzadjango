@@ -69,7 +69,7 @@ def gerar_pdf_demonstrativo(dimensionamento, explicacao, componentes, custo_tota
     )
 
     # ---- CABEÇALHO (TÍTULO + LINHA) ----
-    title_paragraph = Paragraph("Relatório de Cálculo do Elevador Fuza", title_style)
+    title_paragraph = Paragraph("Demonstrativo Custo Produção", title_style)
     elements.append(title_paragraph)
     
     hr = HRFlowable(

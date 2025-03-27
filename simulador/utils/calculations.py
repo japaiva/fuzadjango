@@ -1,5 +1,6 @@
 import math
 from simulador.utils.utils import formatar_demanda_placas
+from simulador.utils.formacao_preco  import FormacaoPreco
 
 def get_all_custos():
     """
@@ -182,14 +183,12 @@ def calcular_componentes(dimensionamento, respostas):
                 custo_unitario = float(valor_outro)
                 unidade = "un"
             else:
-                print(f"ERRO: Item 'OUTROS' ({codigo}) sem nome ou valor especificado")
                 return
         elif codigo_original in todos_custos:
             descricao = todos_custos[codigo_original].descricao
             custo_unitario = todos_custos[codigo_original].valor
             unidade = todos_custos[codigo_original].unidade
         else:
-            print(f"ERRO: Código {codigo_original} não encontrado em todos_custos")
             return
 
         if comprimento is not None and unidade == "m":
@@ -611,3 +610,86 @@ def calcular_chapas_cabine(altura, largura, comprimento):
         "sobra_chapapiso": sobra_chapapiso,
         "num_chapatot": num_chapatot
     }
+
+def calcular_formacao_preco(custo_total, tipo_faturamento="Elevadores"):
+    """
+    Calcula a formação de preço com base no custo total e parâmetros do banco de dados
+    
+    Args:
+        custo_total (float): O custo total de produção
+        tipo_faturamento (str): O tipo de faturamento (Elevadores, Fuza, Manutenção)
+        
+    Returns:
+        dict: Um dicionário contendo todos os componentes da formação de preço
+    """
+    from ..models import Parametro
+    
+    # Buscar parâmetros do banco de dados
+    parametros = {param.parametro: param.valor for param in Parametro.objects.all()}
+    
+    # Mapeamento para chaves no banco de dados
+    mapeamento_chaves = {
+        'Elevadores': 'fat.Elevadores',
+        'Fuza': 'fat.Fuza',
+        'Manutenção': 'fat.Manutenção',
+    }
+    
+    # Percentuais dos parâmetros
+    percentual_comissao = parametros.get('comissao', 0)  
+    percentual_margem = parametros.get('margem', 0)      
+    
+    # Busca a chave exata no mapeamento ou usa o valor padrão
+    chave_imposto = mapeamento_chaves.get(tipo_faturamento, 'fat.Elevadores')
+    
+    percentual_impostos = parametros.get(chave_imposto, 0)
+    
+    # Alçada de desconto
+    alcada_desconto = parametros.get('desc.alcada1', 0)  
+    
+    # Criar a instância de FormacaoPreco com os parâmetros obtidos
+    formacao = FormacaoPreco(
+        custo_producao=custo_total,
+        percentual_margem=percentual_margem,
+        percentual_comissao=percentual_comissao,
+        percentual_impostos=percentual_impostos
+    )
+    
+    # Retornar o modelo formatado para exibição
+    resultado = formacao.get_display_model()
+    
+    # Adicionar a alçada de desconto
+    resultado['alcada_desconto'] = alcada_desconto
+    
+    return resultado
+
+
+def recalcular_com_desconto(formacao_preco, preco_final_sem_impostos):
+    """
+    Recalcula a formação de preço baseado em um preço final ajustado (sem impostos)
+    
+    Args:
+        formacao_preco (dict): Formação de preço original
+        preco_final_sem_impostos (float): Novo preço final sem impostos
+        
+    Returns:
+        dict: Formação de preço atualizada
+    """
+    # Criar uma nova instância de FormacaoPreco com os valores atuais
+    formacao = FormacaoPreco(
+        custo_producao=formacao_preco['custo_producao'],
+        percentual_margem=formacao_preco['percentual_margem'],
+        percentual_comissao=formacao_preco['percentual_comissao'],
+        percentual_impostos=formacao_preco['percentual_impostos']
+    )
+    
+    # Definir o novo preço sem impostos
+    formacao.definir_preco_sem_impostos(preco_final_sem_impostos)
+    
+    # Obter o modelo atualizado
+    nova_formacao = formacao.get_display_model()
+    
+    # Incluir a alçada de desconto se existir no original
+    if 'alcada_desconto' in formacao_preco:
+        nova_formacao['alcada_desconto'] = formacao_preco['alcada_desconto']
+    
+    return nova_formacao

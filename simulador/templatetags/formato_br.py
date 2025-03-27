@@ -16,3 +16,11 @@ def formato_br(valor):
     except (ValueError, TypeError):
         # Se não for um número, retorna o valor original
         return valor
+
+@register.filter
+def multiply(value, arg):
+    """Multiplica um valor por outro (para cálculos em templates)"""
+    try:
+        return float(value) * float(arg)
+    except (ValueError, TypeError):
+        return value
